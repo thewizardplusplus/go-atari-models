@@ -23,7 +23,7 @@ func (board Board) Size() Size {
 	return board.size
 }
 
-// Piece ...
+// Stone ...
 func (board Board) Stone(
 	point Point,
 ) (color Color, ok bool) {
