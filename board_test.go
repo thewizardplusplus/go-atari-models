@@ -191,3 +191,75 @@ func TestBoardCheckMove(test *testing.T) {
 		}
 	}
 }
+
+func TestBoardMovesForColor(
+	test *testing.T,
+) {
+	type fields struct {
+		size   Size
+		stones stoneGroup
+	}
+	type args struct {
+		color Color
+	}
+	type data struct {
+		fields fields
+		args   args
+		want   []Move
+	}
+
+	for _, data := range []data{
+		data{
+			fields: fields{
+				size:   Size{3, 3},
+				stones: nil,
+			},
+			args: args{White},
+			want: []Move{
+				Move{White, Point{0, 0}},
+				Move{White, Point{1, 0}},
+				Move{White, Point{2, 0}},
+				Move{White, Point{0, 1}},
+				Move{White, Point{1, 1}},
+				Move{White, Point{2, 1}},
+				Move{White, Point{0, 2}},
+				Move{White, Point{1, 2}},
+				Move{White, Point{2, 2}},
+			},
+		},
+		data{
+			fields: fields{
+				size: Size{3, 3},
+				stones: stoneGroup{
+					Point{0, 2}: Black,
+					Point{2, 0}: White,
+				},
+			},
+			args: args{White},
+			want: []Move{
+				Move{White, Point{0, 0}},
+				Move{White, Point{1, 0}},
+				Move{White, Point{0, 1}},
+				Move{White, Point{1, 1}},
+				Move{White, Point{2, 1}},
+				Move{White, Point{1, 2}},
+				Move{White, Point{2, 2}},
+			},
+		},
+	} {
+		board := Board{
+			size:   data.fields.size,
+			stones: data.fields.stones,
+		}
+		got := board.MovesForColor(
+			data.args.color,
+		)
+
+		if !reflect.DeepEqual(
+			got,
+			data.want,
+		) {
+			test.Fail()
+		}
+	}
+}
