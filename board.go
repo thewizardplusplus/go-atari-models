@@ -39,6 +39,29 @@ func (board Board) Stone(
 	return color, ok
 }
 
+// StoneNeighbors ...
+func (board Board) StoneNeighbors(
+	point Point,
+) []Point {
+	var neighbors []Point
+	for _, shift := range []Point{} {
+		neighbor := Point{
+			Column: point.Column + shift.Column,
+			Row:    point.Row + shift.Row,
+		}
+
+		_, ok := board.stones[neighbor]
+		if !ok {
+			neighbors = append(
+				neighbors,
+				neighbor,
+			)
+		}
+	}
+
+	return neighbors
+}
+
 // ApplyMove ...
 //
 // It doesn't check that the move
