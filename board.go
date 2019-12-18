@@ -1,5 +1,19 @@
 package atarimodels
 
+import (
+	"errors"
+)
+
+// ...
+var (
+	ErrOutOfSize = errors.New(
+		"out of size",
+	)
+	ErrOccupiedPoint = errors.New(
+		"occupied point",
+	)
+)
+
 // Board ...
 type Board struct {
 	size   Size
@@ -36,4 +50,19 @@ func (board Board) ApplyMove(
 	stones.Move(move)
 
 	return Board{board.size, stones}
+}
+
+// CheckMove ...
+func (board Board) CheckMove(
+	move Move,
+) error {
+	if !board.size.HasPoint(move.Point) {
+		return ErrOutOfSize
+	}
+
+	if _, ok := board.stones[move.Point]; ok {
+		return ErrOccupiedPoint
+	}
+
+	return nil
 }

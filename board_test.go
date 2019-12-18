@@ -112,3 +112,82 @@ func TestBoardApplyMove(test *testing.T) {
 		test.Fail()
 	}
 }
+
+func TestBoardCheckMove(test *testing.T) {
+	type fields struct {
+		size   Size
+		stones stoneGroup
+	}
+	type args struct {
+		move Move
+	}
+	type data struct {
+		fields fields
+		args   args
+		want   error
+	}
+
+	for _, data := range []data{
+		data{
+			fields: fields{
+				size: Size{5, 5},
+				stones: stoneGroup{
+					Point{2, 3}: Black,
+					Point{3, 2}: White,
+				},
+			},
+			args: args{
+				move: Move{White, Point{-1, -1}},
+			},
+			want: ErrOutOfSize,
+		},
+		data{
+			fields: fields{
+				size: Size{5, 5},
+				stones: stoneGroup{
+					Point{2, 3}: Black,
+					Point{3, 2}: White,
+				},
+			},
+			args: args{
+				move: Move{White, Point{2, 3}},
+			},
+			want: ErrOccupiedPoint,
+		},
+		data{
+			fields: fields{
+				size: Size{5, 5},
+				stones: stoneGroup{
+					Point{2, 3}: Black,
+					Point{3, 2}: White,
+				},
+			},
+			args: args{
+				move: Move{White, Point{3, 2}},
+			},
+			want: ErrOccupiedPoint,
+		},
+		data{
+			fields: fields{
+				size: Size{5, 5},
+				stones: stoneGroup{
+					Point{2, 3}: Black,
+				},
+			},
+			args: args{
+				move: Move{White, Point{3, 2}},
+			},
+			want: nil,
+		},
+	} {
+		board := Board{
+			size:   data.fields.size,
+			stones: data.fields.stones,
+		}
+		got := board.CheckMove(data.args.move)
+
+		if got != data.want {
+			test.Fail()
+		}
+	}
+}
