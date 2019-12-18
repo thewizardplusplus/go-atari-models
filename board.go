@@ -42,8 +42,7 @@ func (board Board) Stone(
 // StoneNeighbors ...
 func (board Board) StoneNeighbors(
 	point Point,
-) []Point {
-	var neighbors []Point
+) (empty []Point, occupied []Point) {
 	for _, shift := range []Point{
 		Point{0, -1},
 		Point{-1, 0},
@@ -54,16 +53,18 @@ func (board Board) StoneNeighbors(
 			Column: point.Column + shift.Column,
 			Row:    point.Row + shift.Row,
 		}
+		if !board.size.HasPoint(neighbor) {
+			continue
+		}
 
 		if _, ok := board.stones[neighbor]; ok {
-			neighbors = append(
-				neighbors,
-				neighbor,
-			)
+			occupied = append(occupied, neighbor)
+		} else {
+			empty = append(empty, neighbor)
 		}
 	}
 
-	return neighbors
+	return empty, occupied
 }
 
 // ApplyMove ...

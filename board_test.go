@@ -100,9 +100,10 @@ func TestBoardStoneNeighbors(
 		point Point
 	}
 	type data struct {
-		fields fields
-		args   args
-		want   []Point
+		fields       fields
+		args         args
+		wantEmpty    []Point
+		wantOccupied []Point
 	}
 
 	for _, data := range []data{
@@ -111,20 +112,27 @@ func TestBoardStoneNeighbors(
 				size:   Size{5, 5},
 				stones: nil,
 			},
-			args: args{Point{2, 3}},
-			want: nil,
+			args:         args{Point{2, 3}},
+			wantEmpty:    nil,
+			wantOccupied: nil,
 		},
 	} {
 		board := Board{
 			size:   data.fields.size,
 			stones: data.fields.stones,
 		}
-		got := board.
+		gotEmpty, gotOccupied := board.
 			StoneNeighbors(data.args.point)
 
 		if !reflect.DeepEqual(
-			got,
-			data.want,
+			gotEmpty,
+			data.wantEmpty,
+		) {
+			test.Fail()
+		}
+		if !reflect.DeepEqual(
+			gotOccupied,
+			data.wantOccupied,
 		) {
 			test.Fail()
 		}
