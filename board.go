@@ -1,11 +1,5 @@
 package atarimodels
 
-// Size ...
-type Size struct {
-	Width  int
-	Height int
-}
-
 // Board ...
 type Board struct {
 	size   Size
