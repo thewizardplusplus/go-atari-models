@@ -66,3 +66,22 @@ func (board Board) CheckMove(
 
 	return nil
 }
+
+// MovesForColor ...
+func (board Board) MovesForColor(
+	color Color,
+) []Move {
+	var moves []Move
+	points := board.size.Points()
+	for _, point := range points {
+		move := Move{color, point}
+		err := board.CheckMove(move)
+		if err != nil {
+			continue
+		}
+
+		moves = append(moves, move)
+	}
+
+	return moves
+}
