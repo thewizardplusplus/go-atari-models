@@ -89,6 +89,48 @@ func TestBoardStone(test *testing.T) {
 	}
 }
 
+func TestBoardStoneNeighbors(
+	test *testing.T,
+) {
+	type fields struct {
+		size   Size
+		stones stoneGroup
+	}
+	type args struct {
+		point Point
+	}
+	type data struct {
+		fields fields
+		args   args
+		want   []Point
+	}
+
+	for _, data := range []data{
+		data{
+			fields: fields{
+				size:   Size{5, 5},
+				stones: nil,
+			},
+			args: args{Point{2, 3}},
+			want: nil,
+		},
+	} {
+		board := Board{
+			size:   data.fields.size,
+			stones: data.fields.stones,
+		}
+		got := board.
+			StoneNeighbors(data.args.point)
+
+		if !reflect.DeepEqual(
+			got,
+			data.want,
+		) {
+			test.Fail()
+		}
+	}
+}
+
 func TestBoardApplyMove(test *testing.T) {
 	board := NewBoard(Size{5, 5})
 	for _, move := range []Move{
