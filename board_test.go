@@ -305,6 +305,74 @@ func TestBoardStoneLiberties(
 			},
 			want: 0,
 		},
+		data{
+			fields: fields{
+				size: Size{5, 5},
+				stones: stoneGroup{
+					Point{2, 1}: Black,
+					Point{1, 2}: Black,
+					Point{2, 2}: Black,
+					Point{3, 2}: Black,
+					Point{2, 3}: Black,
+				},
+			},
+			args: args{
+				point: Point{2, 2},
+				exceptions: make(
+					map[Point]struct{},
+				),
+			},
+			want: 12,
+		},
+		data{
+			fields: fields{
+				size: Size{5, 5},
+				stones: stoneGroup{
+					Point{2, 1}: Black,
+					Point{1, 2}: Black,
+					Point{2, 2}: Black,
+					Point{3, 2}: Black,
+					Point{4, 2}: White,
+					Point{2, 3}: Black,
+					Point{3, 3}: White,
+					Point{2, 4}: White,
+				},
+			},
+			args: args{
+				point: Point{2, 2},
+				exceptions: make(
+					map[Point]struct{},
+				),
+			},
+			want: 8,
+		},
+		data{
+			fields: fields{
+				size: Size{5, 5},
+				stones: stoneGroup{
+					Point{2, 0}: White,
+					Point{1, 1}: White,
+					Point{2, 1}: Black,
+					Point{3, 1}: White,
+					Point{0, 2}: White,
+					Point{1, 2}: Black,
+					Point{2, 2}: Black,
+					Point{3, 2}: Black,
+					Point{4, 2}: White,
+					Point{1, 3}: White,
+					Point{2, 3}: Black,
+					Point{3, 3}: White,
+					Point{2, 4}: White,
+				},
+			},
+			args: args{
+				point: Point{2, 2},
+				exceptions: make(
+					map[Point]struct{},
+				),
+			},
+			want: 0,
+		},
 	} {
 		board := Board{
 			size:   data.fields.size,

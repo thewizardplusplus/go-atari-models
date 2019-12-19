@@ -72,6 +72,10 @@ func (board Board) StoneLiberties(
 	point Point,
 	exceptions map[Point]struct{},
 ) int {
+	if _, ok := exceptions[point]; ok {
+		return 0
+	}
+
 	baseColor := board.stones[point]
 	exceptions[point] = struct{}{}
 
