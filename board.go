@@ -68,6 +68,13 @@ func (board Board) StoneNeighbors(
 }
 
 // StoneLiberties ...
+//
+// There should be a stone at the point.
+//
+// The chain shouldn't be nil.
+//
+// After finishing the function
+// the chain will be completed.
 func (board Board) StoneLiberties(
 	point Point,
 	chain map[Point]struct{},
@@ -95,6 +102,28 @@ func (board Board) StoneLiberties(
 	}
 
 	return liberties
+}
+
+// HasCapture ...
+func (board Board) HasCapture(
+	color Color,
+) bool {
+	baseColor := color
+	for point, color := range board.stones {
+		if color != baseColor {
+			continue
+		}
+
+		liberties := board.StoneLiberties(
+			point,
+			make(map[Point]struct{}),
+		)
+		if liberties == 0 {
+			return true
+		}
+	}
+
+	return false
 }
 
 // ApplyMove ...
