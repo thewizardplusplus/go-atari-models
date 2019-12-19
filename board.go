@@ -67,6 +67,34 @@ func (board Board) StoneNeighbors(
 	return empty, occupied
 }
 
+// StoneLiberties ...
+func (board Board) StoneLiberties(
+	point Point,
+	exceptions map[Point]struct{},
+) int {
+	baseColor := board.stones[point]
+	exceptions[point] = struct{}{}
+
+	var liberties int
+	empty, occupied := board.
+		StoneNeighbors(point)
+	liberties += len(empty)
+
+	for _, neighbor := range occupied {
+		color := board.stones[neighbor]
+		if color != baseColor {
+			continue
+		}
+
+		liberties += board.StoneLiberties(
+			neighbor,
+			exceptions,
+		)
+	}
+
+	return liberties
+}
+
 // ApplyMove ...
 //
 // It doesn't check that the move
