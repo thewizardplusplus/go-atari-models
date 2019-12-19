@@ -109,12 +109,85 @@ func TestBoardStoneNeighbors(
 	for _, data := range []data{
 		data{
 			fields: fields{
-				size:   Size{5, 5},
-				stones: nil,
+				size: Size{5, 5},
+				stones: stoneGroup{
+					Point{0, 0}: Black,
+					Point{1, 0}: White,
+				},
 			},
-			args:         args{Point{2, 3}},
-			wantEmpty:    nil,
+			args:         args{Point{0, 0}},
+			wantEmpty:    []Point{Point{0, 1}},
+			wantOccupied: []Point{Point{1, 0}},
+		},
+		data{
+			fields: fields{
+				size: Size{5, 5},
+				stones: stoneGroup{
+					Point{2, 0}: Black,
+					Point{3, 0}: White,
+				},
+			},
+			args: args{Point{2, 0}},
+			wantEmpty: []Point{
+				Point{1, 0},
+				Point{2, 1},
+			},
+			wantOccupied: []Point{Point{3, 0}},
+		},
+		data{
+			fields: fields{
+				size: Size{5, 5},
+				stones: stoneGroup{
+					Point{2, 2}: Black,
+					Point{3, 2}: White,
+					Point{2, 3}: White,
+				},
+			},
+			args: args{Point{2, 2}},
+			wantEmpty: []Point{
+				Point{2, 1},
+				Point{1, 2},
+			},
+			wantOccupied: []Point{
+				Point{3, 2},
+				Point{2, 3},
+			},
+		},
+		data{
+			fields: fields{
+				size: Size{5, 5},
+				stones: stoneGroup{
+					Point{2, 2}: Black,
+				},
+			},
+			args: args{Point{2, 2}},
+			wantEmpty: []Point{
+				Point{2, 1},
+				Point{1, 2},
+				Point{3, 2},
+				Point{2, 3},
+			},
 			wantOccupied: nil,
+		},
+		data{
+			fields: fields{
+				size: Size{5, 5},
+				stones: stoneGroup{
+					Point{2, 1}: White,
+					Point{1, 2}: White,
+					Point{2, 2}: Black,
+					Point{3, 2}: White,
+					Point{2, 3}: White,
+				},
+			},
+			args:      args{Point{2, 2}},
+			wantEmpty: nil,
+			wantOccupied: []Point{
+				Point{2, 1},
+				Point{1, 2},
+				Point{3, 2},
+				Point{2, 3},
+			},
 		},
 	} {
 		board := Board{
