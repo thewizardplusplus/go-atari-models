@@ -189,6 +189,30 @@ func TestBoardStoneNeighbors(
 				Point{2, 3},
 			},
 		},
+		data{
+			fields: fields{
+				size: Size{5, 5},
+				stones: stoneGroup{
+					Point{1, 1}: White,
+					Point{2, 1}: White,
+					Point{3, 1}: White,
+					Point{1, 2}: White,
+					Point{2, 2}: Black,
+					Point{3, 2}: White,
+					Point{1, 3}: White,
+					Point{2, 3}: White,
+					Point{3, 3}: White,
+				},
+			},
+			args:      args{Point{2, 2}},
+			wantEmpty: nil,
+			wantOccupied: []Point{
+				Point{2, 1},
+				Point{1, 2},
+				Point{3, 2},
+				Point{2, 3},
+			},
+		},
 	} {
 		board := Board{
 			size:   data.fields.size,
@@ -220,7 +244,8 @@ func TestBoardStoneLiberties(
 		stones stoneGroup
 	}
 	type args struct {
-		point Point
+		point      Point
+		exceptions map[Point]struct{}
 	}
 	type data struct {
 		fields fields
@@ -233,11 +258,51 @@ func TestBoardStoneLiberties(
 			fields: fields{
 				size: Size{5, 5},
 				stones: stoneGroup{
-					Point{0, 0}: Black,
-					Point{1, 0}: White,
+					Point{2, 2}: Black,
 				},
 			},
-			args: args{Point{0, 0}},
+			args: args{
+				point: Point{2, 2},
+				exceptions: make(
+					map[Point]struct{},
+				),
+			},
+			want: 4,
+		},
+		data{
+			fields: fields{
+				size: Size{5, 5},
+				stones: stoneGroup{
+					Point{2, 2}: Black,
+					Point{3, 2}: White,
+					Point{2, 3}: White,
+				},
+			},
+			args: args{
+				point: Point{2, 2},
+				exceptions: make(
+					map[Point]struct{},
+				),
+			},
+			want: 2,
+		},
+		data{
+			fields: fields{
+				size: Size{5, 5},
+				stones: stoneGroup{
+					Point{2, 1}: White,
+					Point{1, 2}: White,
+					Point{2, 2}: Black,
+					Point{3, 2}: White,
+					Point{2, 3}: White,
+				},
+			},
+			args: args{
+				point: Point{2, 2},
+				exceptions: make(
+					map[Point]struct{},
+				),
+			},
 			want: 0,
 		},
 	} {
@@ -247,7 +312,7 @@ func TestBoardStoneLiberties(
 		}
 		got := board.StoneLiberties(
 			data.args.point,
-			make(map[Point]struct{}),
+			data.args.exceptions,
 		)
 
 		if !reflect.DeepEqual(
