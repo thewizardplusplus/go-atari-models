@@ -520,9 +520,7 @@ func TestBoardCheckMove(test *testing.T) {
 	}
 }
 
-func TestBoardMovesForColor(
-	test *testing.T,
-) {
+func TestBoardMoves(test *testing.T) {
 	type fields struct {
 		size   Size
 		stones stoneGroup
@@ -579,9 +577,7 @@ func TestBoardMovesForColor(
 			size:   data.fields.size,
 			stones: data.fields.stones,
 		}
-		got := board.MovesForColor(
-			data.args.color,
-		)
+		got := board.Moves(data.args.color)
 
 		if !reflect.DeepEqual(
 			got,

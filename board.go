@@ -125,8 +125,8 @@ func (board Board) CheckMove(
 	return nil
 }
 
-// MovesForColor ...
-func (board Board) MovesForColor(
+// Moves ...
+func (board Board) Moves(
 	color Color,
 ) []Move {
 	var moves []Move
