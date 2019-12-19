@@ -244,13 +244,14 @@ func TestBoardStoneLiberties(
 		stones stoneGroup
 	}
 	type args struct {
-		point      Point
-		exceptions map[Point]struct{}
+		point Point
+		chain map[Point]struct{}
 	}
 	type data struct {
-		fields fields
-		args   args
-		want   int
+		fields        fields
+		args          args
+		wantLiberties int
+		wantChain     map[Point]struct{}
 	}
 
 	for _, data := range []data{
@@ -263,11 +264,12 @@ func TestBoardStoneLiberties(
 			},
 			args: args{
 				point: Point{2, 2},
-				exceptions: make(
-					map[Point]struct{},
-				),
+				chain: make(map[Point]struct{}),
 			},
-			want: 4,
+			wantLiberties: 4,
+			wantChain: map[Point]struct{}{
+				Point{2, 2}: struct{}{},
+			},
 		},
 		data{
 			fields: fields{
@@ -280,11 +282,12 @@ func TestBoardStoneLiberties(
 			},
 			args: args{
 				point: Point{2, 2},
-				exceptions: make(
-					map[Point]struct{},
-				),
+				chain: make(map[Point]struct{}),
 			},
-			want: 2,
+			wantLiberties: 2,
+			wantChain: map[Point]struct{}{
+				Point{2, 2}: struct{}{},
+			},
 		},
 		data{
 			fields: fields{
@@ -299,11 +302,12 @@ func TestBoardStoneLiberties(
 			},
 			args: args{
 				point: Point{2, 2},
-				exceptions: make(
-					map[Point]struct{},
-				),
+				chain: make(map[Point]struct{}),
 			},
-			want: 0,
+			wantLiberties: 0,
+			wantChain: map[Point]struct{}{
+				Point{2, 2}: struct{}{},
+			},
 		},
 		data{
 			fields: fields{
@@ -318,11 +322,16 @@ func TestBoardStoneLiberties(
 			},
 			args: args{
 				point: Point{2, 2},
-				exceptions: make(
-					map[Point]struct{},
-				),
+				chain: make(map[Point]struct{}),
 			},
-			want: 12,
+			wantLiberties: 12,
+			wantChain: map[Point]struct{}{
+				Point{2, 1}: struct{}{},
+				Point{1, 2}: struct{}{},
+				Point{2, 2}: struct{}{},
+				Point{3, 2}: struct{}{},
+				Point{2, 3}: struct{}{},
+			},
 		},
 		data{
 			fields: fields{
@@ -340,11 +349,16 @@ func TestBoardStoneLiberties(
 			},
 			args: args{
 				point: Point{2, 2},
-				exceptions: make(
-					map[Point]struct{},
-				),
+				chain: make(map[Point]struct{}),
 			},
-			want: 8,
+			wantLiberties: 8,
+			wantChain: map[Point]struct{}{
+				Point{2, 1}: struct{}{},
+				Point{1, 2}: struct{}{},
+				Point{2, 2}: struct{}{},
+				Point{3, 2}: struct{}{},
+				Point{2, 3}: struct{}{},
+			},
 		},
 		data{
 			fields: fields{
@@ -367,25 +381,36 @@ func TestBoardStoneLiberties(
 			},
 			args: args{
 				point: Point{2, 2},
-				exceptions: make(
-					map[Point]struct{},
-				),
+				chain: make(map[Point]struct{}),
 			},
-			want: 0,
+			wantLiberties: 0,
+			wantChain: map[Point]struct{}{
+				Point{2, 1}: struct{}{},
+				Point{1, 2}: struct{}{},
+				Point{2, 2}: struct{}{},
+				Point{3, 2}: struct{}{},
+				Point{2, 3}: struct{}{},
+			},
 		},
 	} {
 		board := Board{
 			size:   data.fields.size,
 			stones: data.fields.stones,
 		}
-		got := board.StoneLiberties(
+		gotLiberties := board.StoneLiberties(
 			data.args.point,
-			data.args.exceptions,
+			data.args.chain,
 		)
 
 		if !reflect.DeepEqual(
-			got,
-			data.want,
+			gotLiberties,
+			data.wantLiberties,
+		) {
+			test.Fail()
+		}
+		if !reflect.DeepEqual(
+			data.args.chain,
+			data.wantChain,
 		) {
 			test.Fail()
 		}

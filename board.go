@@ -70,14 +70,14 @@ func (board Board) StoneNeighbors(
 // StoneLiberties ...
 func (board Board) StoneLiberties(
 	point Point,
-	exceptions map[Point]struct{},
+	chain map[Point]struct{},
 ) int {
-	if _, ok := exceptions[point]; ok {
+	if _, ok := chain[point]; ok {
 		return 0
 	}
 
 	baseColor := board.stones[point]
-	exceptions[point] = struct{}{}
+	chain[point] = struct{}{}
 
 	var liberties int
 	empty, occupied := board.
@@ -90,10 +90,8 @@ func (board Board) StoneLiberties(
 			continue
 		}
 
-		liberties += board.StoneLiberties(
-			neighbor,
-			exceptions,
-		)
+		liberties +=
+			board.StoneLiberties(neighbor, chain)
 	}
 
 	return liberties
