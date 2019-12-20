@@ -77,10 +77,7 @@ func TestBoardStone(test *testing.T) {
 		gotColor, gotOk := board.
 			Stone(data.args.point)
 
-		if !reflect.DeepEqual(
-			gotColor,
-			data.wantColor,
-		) {
+		if gotColor != data.wantColor {
 			test.Fail()
 		}
 		if gotOk != data.wantOk {
@@ -402,16 +399,102 @@ func TestBoardStoneLiberties(
 			data.args.chain,
 		)
 
-		if !reflect.DeepEqual(
-			gotLiberties,
-			data.wantLiberties,
-		) {
+		if gotLiberties != data.wantLiberties {
 			test.Fail()
 		}
 		if !reflect.DeepEqual(
 			data.args.chain,
 			data.wantChain,
 		) {
+			test.Fail()
+		}
+	}
+}
+
+func TestBoardHasCapture(test *testing.T) {
+	type fields struct {
+		size   Size
+		stones stoneGroup
+	}
+	type args struct {
+		color Color
+	}
+	type data struct {
+		fields fields
+		args   args
+		want   bool
+	}
+
+	for _, data := range []data{
+		data{
+			fields: fields{
+				size: Size{5, 5},
+				stones: stoneGroup{
+					Point{2, 1}: Black,
+					Point{1, 2}: Black,
+					Point{2, 2}: Black,
+					Point{3, 2}: Black,
+					Point{4, 2}: White,
+					Point{2, 3}: Black,
+					Point{3, 3}: White,
+					Point{2, 4}: White,
+				},
+			},
+			args: args{Black},
+			want: false,
+		},
+		data{
+			fields: fields{
+				size: Size{5, 5},
+				stones: stoneGroup{
+					Point{2, 0}: White,
+					Point{1, 1}: White,
+					Point{2, 1}: Black,
+					Point{3, 1}: White,
+					Point{0, 2}: White,
+					Point{1, 2}: Black,
+					Point{2, 2}: Black,
+					Point{3, 2}: Black,
+					Point{4, 2}: White,
+					Point{1, 3}: White,
+					Point{2, 3}: Black,
+					Point{3, 3}: White,
+					Point{2, 4}: White,
+				},
+			},
+			args: args{Black},
+			want: true,
+		},
+		data{
+			fields: fields{
+				size: Size{5, 5},
+				stones: stoneGroup{
+					Point{2, 0}: White,
+					Point{1, 1}: White,
+					Point{2, 1}: Black,
+					Point{3, 1}: White,
+					Point{0, 2}: White,
+					Point{1, 2}: Black,
+					Point{2, 2}: Black,
+					Point{3, 2}: Black,
+					Point{4, 2}: White,
+					Point{1, 3}: White,
+					Point{2, 3}: Black,
+					Point{3, 3}: White,
+					Point{2, 4}: White,
+				},
+			},
+			args: args{White},
+			want: false,
+		},
+	} {
+		board := Board{
+			size:   data.fields.size,
+			stones: data.fields.stones,
+		}
+		got := board.HasCapture(data.args.color)
+
+		if got != data.want {
 			test.Fail()
 		}
 	}
