@@ -12,6 +12,9 @@ var (
 	ErrOccupiedPoint = errors.New(
 		"occupied point",
 	)
+	ErrSelfcapture = errors.New(
+		"self-capture",
+	)
 )
 
 // Board ...
@@ -149,6 +152,11 @@ func (board Board) CheckMove(
 
 	if _, ok := board.stones[move.Point]; ok {
 		return ErrOccupiedPoint
+	}
+
+	nextBoard := board.ApplyMove(move)
+	if nextBoard.HasCapture(move.Color) {
+		return ErrSelfcapture
 	}
 
 	return nil

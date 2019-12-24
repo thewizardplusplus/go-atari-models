@@ -629,6 +629,21 @@ func TestBoardCheckMove(test *testing.T) {
 			fields: fields{
 				size: Size{5, 5},
 				stones: stoneGroup{
+					Point{2, 1}: White,
+					Point{1, 2}: White,
+					Point{3, 2}: White,
+					Point{2, 3}: White,
+				},
+			},
+			args: args{
+				move: Move{Black, Point{2, 2}},
+			},
+			want: ErrSelfcapture,
+		},
+		data{
+			fields: fields{
+				size: Size{5, 5},
+				stones: stoneGroup{
 					Point{2, 3}: Black,
 				},
 			},
@@ -698,6 +713,24 @@ func TestBoardMoves(test *testing.T) {
 				Move{White, Point{0, 1}},
 				Move{White, Point{1, 1}},
 				Move{White, Point{2, 1}},
+				Move{White, Point{1, 2}},
+				Move{White, Point{2, 2}},
+			},
+		},
+		data{
+			fields: fields{
+				size: Size{3, 3},
+				stones: stoneGroup{
+					Point{0, 1}: Black,
+					Point{1, 0}: Black,
+				},
+			},
+			args: args{White},
+			want: []Move{
+				Move{White, Point{2, 0}},
+				Move{White, Point{1, 1}},
+				Move{White, Point{2, 1}},
+				Move{White, Point{0, 2}},
 				Move{White, Point{1, 2}},
 				Move{White, Point{2, 2}},
 			},
