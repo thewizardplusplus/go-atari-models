@@ -447,6 +447,23 @@ func TestBoardHasCapture(test *testing.T) {
 			fields: fields{
 				size: Size{5, 5},
 				stones: stoneGroup{
+					Point{2, 1}: Black,
+					Point{1, 2}: Black,
+					Point{2, 2}: Black,
+					Point{3, 2}: Black,
+					Point{4, 2}: White,
+					Point{2, 3}: Black,
+					Point{3, 3}: White,
+					Point{2, 4}: White,
+				},
+			},
+			args: args{White},
+			want: false,
+		},
+		data{
+			fields: fields{
+				size: Size{5, 5},
+				stones: stoneGroup{
 					Point{2, 0}: White,
 					Point{1, 1}: White,
 					Point{2, 1}: Black,
@@ -486,6 +503,36 @@ func TestBoardHasCapture(test *testing.T) {
 			},
 			args: args{White},
 			want: false,
+		},
+		data{
+			fields: fields{
+				size: Size{5, 5},
+				stones: stoneGroup{
+					Point{0, 0}: Black,
+					Point{0, 1}: White,
+					Point{1, 0}: White,
+					Point{4, 3}: Black,
+					Point{3, 4}: Black,
+					Point{4, 4}: White,
+				},
+			},
+			args: args{Black},
+			want: true,
+		},
+		data{
+			fields: fields{
+				size: Size{5, 5},
+				stones: stoneGroup{
+					Point{0, 0}: Black,
+					Point{0, 1}: White,
+					Point{1, 0}: White,
+					Point{4, 3}: Black,
+					Point{3, 4}: Black,
+					Point{4, 4}: White,
+				},
+			},
+			args: args{White},
+			want: true,
 		},
 	} {
 		board := Board{
