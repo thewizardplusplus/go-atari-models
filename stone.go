@@ -1,14 +1,5 @@
 package atarimodels
 
-// Color ...
-type Color int
-
-// ...
-const (
-	Black Color = iota
-	White
-)
-
 // Point ...
 type Point struct {
 	Column int
