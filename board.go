@@ -155,7 +155,9 @@ func (board Board) CheckMove(
 	}
 
 	nextBoard := board.ApplyMove(move)
-	if nextBoard.HasCapture(move.Color) {
+	nextColor := move.Color.Negative()
+	if nextBoard.HasCapture(move.Color) &&
+		!nextBoard.HasCapture(nextColor) {
 		return ErrSelfcapture
 	}
 

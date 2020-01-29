@@ -652,6 +652,26 @@ func TestBoardCheckMove(test *testing.T) {
 			},
 			want: nil,
 		},
+		// a move with self-capture is allowed,
+		// if the opponent will be captured
+		data{
+			fields: fields{
+				size: Size{5, 5},
+				stones: stoneGroup{
+					Point{1, 1}: Black,
+					Point{2, 1}: White,
+					Point{0, 2}: Black,
+					Point{1, 2}: White,
+					Point{3, 2}: White,
+					Point{1, 3}: Black,
+					Point{2, 3}: White,
+				},
+			},
+			args: args{
+				move: Move{Black, Point{2, 2}},
+			},
+			want: nil,
+		},
 	} {
 		board := Board{
 			size:   data.fields.size,
