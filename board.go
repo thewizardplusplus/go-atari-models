@@ -109,11 +109,18 @@ func (board Board) StoneLiberties(
 
 // HasCapture ...
 func (board Board) HasCapture(
-	color Color,
+	color ...Color,
 ) bool {
-	baseColor := color
+	var filterByColor bool
+	var sampleColor Color
+	if len(color) != 0 {
+		filterByColor = true
+		sampleColor = color[0]
+	}
+
 	for point, color := range board.stones {
-		if color != baseColor {
+		if filterByColor &&
+			color != sampleColor {
 			continue
 		}
 

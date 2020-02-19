@@ -417,7 +417,7 @@ func TestBoardHasCapture(test *testing.T) {
 		stones stoneGroup
 	}
 	type args struct {
-		color Color
+		color []Color
 	}
 	type data struct {
 		fields fields
@@ -440,7 +440,7 @@ func TestBoardHasCapture(test *testing.T) {
 					Point{2, 4}: White,
 				},
 			},
-			args: args{Black},
+			args: args{[]Color{Black}},
 			want: false,
 		},
 		data{
@@ -457,7 +457,7 @@ func TestBoardHasCapture(test *testing.T) {
 					Point{2, 4}: White,
 				},
 			},
-			args: args{White},
+			args: args{[]Color{White}},
 			want: false,
 		},
 		data{
@@ -479,7 +479,7 @@ func TestBoardHasCapture(test *testing.T) {
 					Point{2, 4}: White,
 				},
 			},
-			args: args{Black},
+			args: args{[]Color{Black}},
 			want: true,
 		},
 		data{
@@ -501,7 +501,7 @@ func TestBoardHasCapture(test *testing.T) {
 					Point{2, 4}: White,
 				},
 			},
-			args: args{White},
+			args: args{[]Color{White}},
 			want: false,
 		},
 		data{
@@ -516,7 +516,7 @@ func TestBoardHasCapture(test *testing.T) {
 					Point{4, 4}: White,
 				},
 			},
-			args: args{Black},
+			args: args{[]Color{Black}},
 			want: true,
 		},
 		data{
@@ -531,7 +531,31 @@ func TestBoardHasCapture(test *testing.T) {
 					Point{4, 4}: White,
 				},
 			},
-			args: args{White},
+			args: args{[]Color{White}},
+			want: true,
+		},
+		data{
+			fields: fields{
+				size: Size{5, 5},
+				stones: stoneGroup{
+					Point{0, 0}: Black,
+					Point{0, 1}: White,
+					Point{1, 0}: White,
+				},
+			},
+			args: args{nil},
+			want: true,
+		},
+		data{
+			fields: fields{
+				size: Size{5, 5},
+				stones: stoneGroup{
+					Point{4, 3}: Black,
+					Point{3, 4}: Black,
+					Point{4, 4}: White,
+				},
+			},
+			args: args{nil},
 			want: true,
 		},
 	} {
@@ -539,7 +563,8 @@ func TestBoardHasCapture(test *testing.T) {
 			size:   data.fields.size,
 			stones: data.fields.stones,
 		}
-		got := board.HasCapture(data.args.color)
+		got :=
+			board.HasCapture(data.args.color...)
 
 		if got != data.want {
 			test.Fail()
