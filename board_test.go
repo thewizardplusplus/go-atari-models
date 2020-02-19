@@ -710,7 +710,9 @@ func TestBoardCheckMove(test *testing.T) {
 	}
 }
 
-func TestBoardMoves(test *testing.T) {
+func TestBoardPseudolegalMoves(
+	test *testing.T,
+) {
 	type fields struct {
 		size   Size
 		stones stoneGroup
@@ -785,7 +787,9 @@ func TestBoardMoves(test *testing.T) {
 			size:   data.fields.size,
 			stones: data.fields.stones,
 		}
-		got := board.Moves(data.args.color)
+		got := board.PseudolegalMoves(
+			data.args.color,
+		)
 
 		if !reflect.DeepEqual(
 			got,

@@ -171,8 +171,8 @@ func (board Board) CheckMove(
 	return nil
 }
 
-// Moves ...
-func (board Board) Moves(
+// PseudolegalMoves ...
+func (board Board) PseudolegalMoves(
 	color Color,
 ) []Move {
 	var moves []Move
