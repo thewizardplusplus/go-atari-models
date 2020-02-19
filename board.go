@@ -110,7 +110,7 @@ func (board Board) StoneLiberties(
 // HasCapture ...
 func (board Board) HasCapture(
 	color ...Color,
-) bool {
+) (Color, bool) {
 	var filterByColor bool
 	var sampleColor Color
 	if len(color) != 0 {
@@ -129,11 +129,11 @@ func (board Board) HasCapture(
 			make(map[Point]struct{}),
 		)
 		if liberties == 0 {
-			return true
+			return color, true
 		}
 	}
 
-	return false
+	return 0, false
 }
 
 // ApplyMove ...
@@ -163,8 +163,11 @@ func (board Board) CheckMove(
 
 	nextBoard := board.ApplyMove(move)
 	nextColor := move.Color.Negative()
-	if nextBoard.HasCapture(move.Color) &&
-		!nextBoard.HasCapture(nextColor) {
+	_, selfcapture :=
+		nextBoard.HasCapture(move.Color)
+	_, opponentCapture :=
+		nextBoard.HasCapture(nextColor)
+	if selfcapture && !opponentCapture {
 		return ErrSelfcapture
 	}
 
@@ -188,4 +191,11 @@ func (board Board) PseudolegalMoves(
 	}
 
 	return moves
+}
+
+// LegalMoves ...
+func (board Board) LegalMoves(
+	color Color,
+) []Move {
+	return board.PseudolegalMoves(color)
 }

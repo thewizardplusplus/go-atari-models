@@ -420,9 +420,10 @@ func TestBoardHasCapture(test *testing.T) {
 		color []Color
 	}
 	type data struct {
-		fields fields
-		args   args
-		want   bool
+		fields    fields
+		args      args
+		wantColor Color
+		wantOk    bool
 	}
 
 	for _, data := range []data{
@@ -440,8 +441,9 @@ func TestBoardHasCapture(test *testing.T) {
 					Point{2, 4}: White,
 				},
 			},
-			args: args{[]Color{Black}},
-			want: false,
+			args:      args{[]Color{Black}},
+			wantColor: 0,
+			wantOk:    false,
 		},
 		data{
 			fields: fields{
@@ -457,8 +459,9 @@ func TestBoardHasCapture(test *testing.T) {
 					Point{2, 4}: White,
 				},
 			},
-			args: args{[]Color{White}},
-			want: false,
+			args:      args{[]Color{White}},
+			wantColor: 0,
+			wantOk:    false,
 		},
 		data{
 			fields: fields{
@@ -479,8 +482,9 @@ func TestBoardHasCapture(test *testing.T) {
 					Point{2, 4}: White,
 				},
 			},
-			args: args{[]Color{Black}},
-			want: true,
+			args:      args{[]Color{Black}},
+			wantColor: Black,
+			wantOk:    true,
 		},
 		data{
 			fields: fields{
@@ -501,8 +505,9 @@ func TestBoardHasCapture(test *testing.T) {
 					Point{2, 4}: White,
 				},
 			},
-			args: args{[]Color{White}},
-			want: false,
+			args:      args{[]Color{White}},
+			wantColor: 0,
+			wantOk:    false,
 		},
 		data{
 			fields: fields{
@@ -516,8 +521,9 @@ func TestBoardHasCapture(test *testing.T) {
 					Point{4, 4}: White,
 				},
 			},
-			args: args{[]Color{Black}},
-			want: true,
+			args:      args{[]Color{Black}},
+			wantColor: Black,
+			wantOk:    true,
 		},
 		data{
 			fields: fields{
@@ -531,8 +537,9 @@ func TestBoardHasCapture(test *testing.T) {
 					Point{4, 4}: White,
 				},
 			},
-			args: args{[]Color{White}},
-			want: true,
+			args:      args{[]Color{White}},
+			wantColor: White,
+			wantOk:    true,
 		},
 		data{
 			fields: fields{
@@ -543,8 +550,9 @@ func TestBoardHasCapture(test *testing.T) {
 					Point{1, 0}: White,
 				},
 			},
-			args: args{nil},
-			want: true,
+			args:      args{nil},
+			wantColor: Black,
+			wantOk:    true,
 		},
 		data{
 			fields: fields{
@@ -555,18 +563,22 @@ func TestBoardHasCapture(test *testing.T) {
 					Point{4, 4}: White,
 				},
 			},
-			args: args{nil},
-			want: true,
+			args:      args{nil},
+			wantColor: White,
+			wantOk:    true,
 		},
 	} {
 		board := Board{
 			size:   data.fields.size,
 			stones: data.fields.stones,
 		}
-		got :=
+		gotColor, gotOk :=
 			board.HasCapture(data.args.color...)
 
-		if got != data.want {
+		if gotColor != data.wantColor {
+			test.Fail()
+		}
+		if gotOk != data.wantOk {
 			test.Fail()
 		}
 	}
