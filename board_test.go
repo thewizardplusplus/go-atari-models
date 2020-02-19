@@ -811,3 +811,85 @@ func TestBoardPseudolegalMoves(
 		}
 	}
 }
+
+func TestBoardLegalMoves(test *testing.T) {
+	type fields struct {
+		size   Size
+		stones stoneGroup
+	}
+	type args struct {
+		color Color
+	}
+	type data struct {
+		fields    fields
+		args      args
+		wantMoves []Move
+		wantErr   error
+	}
+
+	for _, data := range []data{
+		data{
+			fields: fields{
+				size: Size{3, 3},
+				stones: stoneGroup{
+					Point{0, 2}: Black,
+					Point{2, 0}: White,
+				},
+			},
+			args: args{White},
+			wantMoves: []Move{
+				Move{White, Point{0, 0}},
+				Move{White, Point{1, 0}},
+				Move{White, Point{0, 1}},
+				Move{White, Point{1, 1}},
+				Move{White, Point{2, 1}},
+				Move{White, Point{1, 2}},
+				Move{White, Point{2, 2}},
+			},
+			wantErr: nil,
+		},
+		data{
+			fields: fields{
+				size: Size{3, 3},
+				stones: stoneGroup{
+					Point{0, 0}: Black,
+					Point{0, 1}: White,
+					Point{1, 0}: White,
+				},
+			},
+			args:      args{Black},
+			wantMoves: nil,
+			wantErr:   ErrAlreadyLoss,
+		},
+		data{
+			fields: fields{
+				size: Size{3, 3},
+				stones: stoneGroup{
+					Point{0, 0}: Black,
+					Point{0, 1}: White,
+					Point{1, 0}: White,
+				},
+			},
+			args:      args{White},
+			wantMoves: nil,
+			wantErr:   ErrAlreadyWin,
+		},
+	} {
+		board := Board{
+			size:   data.fields.size,
+			stones: data.fields.stones,
+		}
+		gotMoves, gotErr :=
+			board.LegalMoves(data.args.color)
+
+		if !reflect.DeepEqual(
+			gotMoves,
+			data.wantMoves,
+		) {
+			test.Fail()
+		}
+		if gotErr != data.wantErr {
+			test.Fail()
+		}
+	}
+}

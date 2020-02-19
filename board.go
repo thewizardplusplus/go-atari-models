@@ -15,6 +15,10 @@ var (
 	ErrSelfcapture = errors.New(
 		"self-capture",
 	)
+	ErrAlreadyLoss = errors.New(
+		"already loss",
+	)
+	ErrAlreadyWin = errors.New("already win")
 )
 
 // Board ...
@@ -196,6 +200,19 @@ func (board Board) PseudolegalMoves(
 // LegalMoves ...
 func (board Board) LegalMoves(
 	color Color,
-) []Move {
-	return board.PseudolegalMoves(color)
+) ([]Move, error) {
+	captureColor, ok := board.HasCapture()
+	if !ok {
+		moves := board.PseudolegalMoves(color)
+		return moves, nil
+	}
+
+	var err error
+	if captureColor == color {
+		err = ErrAlreadyLoss
+	} else {
+		err = ErrAlreadyWin
+	}
+
+	return nil, err
 }
