@@ -15,6 +15,10 @@ var (
 	ErrSelfcapture = errors.New(
 		"self-capture",
 	)
+)
+
+// ...
+var (
 	ErrAlreadyLoss = errors.New(
 		"already loss",
 	)
@@ -198,6 +202,9 @@ func (board Board) PseudolegalMoves(
 }
 
 // LegalMoves ...
+//
+// Returned error can be
+// ErrAlreadyLoss or ErrAlreadyWin only.
 func (board Board) LegalMoves(
 	color Color,
 ) ([]Move, error) {
