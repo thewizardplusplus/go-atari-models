@@ -874,6 +874,23 @@ func TestBoardLegalMoves(test *testing.T) {
 			wantMoves: nil,
 			wantErr:   ErrAlreadyWin,
 		},
+		data{
+			fields: fields{
+				size: Size{3, 3},
+				stones: stoneGroup{
+					Point{1, 0}: White,
+					Point{2, 0}: White,
+					Point{0, 1}: White,
+					Point{1, 1}: White,
+					Point{2, 1}: White,
+					Point{0, 2}: White,
+					Point{1, 2}: White,
+				},
+			},
+			args:      args{Black},
+			wantMoves: nil,
+			wantErr:   ErrAlreadyLoss,
+		},
 	} {
 		board := Board{
 			size:   data.fields.size,

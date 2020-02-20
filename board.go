@@ -202,17 +202,23 @@ func (board Board) LegalMoves(
 	color Color,
 ) ([]Move, error) {
 	captureColor, ok := board.HasCapture()
-	if !ok {
-		moves := board.PseudolegalMoves(color)
-		return moves, nil
+	if ok {
+		var err error
+		if captureColor == color {
+			err = ErrAlreadyLoss
+		} else {
+			err = ErrAlreadyWin
+		}
+
+		return nil, err
 	}
 
-	var err error
-	if captureColor == color {
-		err = ErrAlreadyLoss
-	} else {
-		err = ErrAlreadyWin
+	moves := board.PseudolegalMoves(color)
+	if len(moves) == 0 {
+		// game result in this case
+		// depends on used game rules
+		return nil, ErrAlreadyLoss
 	}
 
-	return nil, err
+	return moves, nil
 }
