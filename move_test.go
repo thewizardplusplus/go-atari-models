@@ -5,8 +5,10 @@ import (
 	"testing"
 )
 
-func TestNewMove(test *testing.T) {
-	got := NewMove(Black)
+func TestNewPreliminaryMove(
+	test *testing.T,
+) {
+	got := NewPreliminaryMove(Black)
 
 	want := Move{Color: White}
 	if !reflect.DeepEqual(got, want) {

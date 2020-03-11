@@ -12,8 +12,11 @@ type Move struct {
 	Point Point
 }
 
-// NewMove ...
-func NewMove(color Color) Move {
+// NewPreliminaryMove ...
+//
+// It creates the move
+// from only the negated passed color.
+func NewPreliminaryMove(color Color) Move {
 	return Move{
 		Color: color.Negative(),
 	}
