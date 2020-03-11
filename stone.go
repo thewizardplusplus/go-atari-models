@@ -1,17 +1,5 @@
 package atarimodels
 
-// Point ...
-type Point struct {
-	Column int
-	Row    int
-}
-
-// Move ...
-type Move struct {
-	Color Color
-	Point Point
-}
-
 type stoneGroup map[Point]Color
 
 // It doesn't check that the move is correct.
