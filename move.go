@@ -1,11 +1,5 @@
 package atarimodels
 
-// Point ...
-type Point struct {
-	Column int
-	Row    int
-}
-
 // Move ...
 type Move struct {
 	Color Color

@@ -60,10 +60,7 @@ func (board Board) StoneNeighbors(
 		Point{1, 0},
 		Point{0, 1},
 	} {
-		neighbor := Point{
-			Column: point.Column + shift.Column,
-			Row:    point.Row + shift.Row,
-		}
+		neighbor := point.Translate(shift)
 		if !board.size.HasPoint(neighbor) {
 			continue
 		}
