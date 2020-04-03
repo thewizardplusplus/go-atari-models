@@ -10,8 +10,20 @@ func (group stoneGroup) Move(move Move) {
 func (group stoneGroup) Copy() stoneGroup {
 	groupCopy := make(stoneGroup)
 	for point, color := range group {
-		move := Move{color, point}
-		groupCopy.Move(move)
+		groupCopy[point] = color
+	}
+
+	return groupCopy
+}
+
+func (group stoneGroup) CopyByPoints(
+	points []Point,
+) stoneGroup {
+	groupCopy := make(stoneGroup)
+	for _, point := range points {
+		if color, ok := group[point]; ok {
+			groupCopy[point] = color
+		}
 	}
 
 	return groupCopy

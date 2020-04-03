@@ -114,8 +114,10 @@ func (board Board) StoneLiberties(
 
 // HasCaptureConfiguration ...
 type HasCaptureConfiguration struct {
-	filterByColor bool
-	sampleColor   Color
+	filterByColor  bool
+	filterByOrigin bool
+	sampleColor    Color
+	origin         Point
 }
 
 // HasCaptureOption ...
@@ -135,6 +137,18 @@ func WithColor(
 	}
 }
 
+// WithOrigin ...
+func WithOrigin(
+	origin Point,
+) HasCaptureOption {
+	return func(
+		configuration *HasCaptureConfiguration,
+	) {
+		configuration.filterByOrigin = true
+		configuration.origin = origin
+	}
+}
+
 // HasCapture ...
 func (board Board) HasCapture(
 	options ...HasCaptureOption,
@@ -144,7 +158,17 @@ func (board Board) HasCapture(
 		option(&configuration)
 	}
 
-	for point, color := range board.stones {
+	var stones stoneGroup
+	if !configuration.filterByOrigin {
+		stones = board.stones
+	} else {
+		_, occupied := board.
+			StoneNeighbors(configuration.origin)
+		stones = board.stones.
+			CopyByPoints(occupied)
+	}
+
+	for point, color := range stones {
 		if configuration.filterByColor &&
 			color != configuration.sampleColor {
 			continue
