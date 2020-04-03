@@ -112,20 +112,41 @@ func (board Board) StoneLiberties(
 	return liberties
 }
 
+// HasCaptureConfiguration ...
+type HasCaptureConfiguration struct {
+	filterByColor bool
+	sampleColor   Color
+}
+
+// HasCaptureOption ...
+type HasCaptureOption func(
+	configuration *HasCaptureConfiguration,
+)
+
+// WithColor ...
+func WithColor(
+	color Color,
+) HasCaptureOption {
+	return func(
+		configuration *HasCaptureConfiguration,
+	) {
+		configuration.filterByColor = true
+		configuration.sampleColor = color
+	}
+}
+
 // HasCapture ...
 func (board Board) HasCapture(
-	color ...Color,
+	options ...HasCaptureOption,
 ) (Color, bool) {
-	var filterByColor bool
-	var sampleColor Color
-	if len(color) != 0 {
-		filterByColor = true
-		sampleColor = color[0]
+	var configuration HasCaptureConfiguration
+	for _, option := range options {
+		option(&configuration)
 	}
 
 	for point, color := range board.stones {
-		if filterByColor &&
-			color != sampleColor {
+		if configuration.filterByColor &&
+			color != configuration.sampleColor {
 			continue
 		}
 
@@ -169,9 +190,13 @@ func (board Board) CheckMove(
 	nextBoard := board.ApplyMove(move)
 	nextColor := move.Color.Negative()
 	_, selfcapture :=
-		nextBoard.HasCapture(move.Color)
+		nextBoard.HasCapture(
+			WithColor(move.Color),
+		)
 	_, opponentCapture :=
-		nextBoard.HasCapture(nextColor)
+		nextBoard.HasCapture(
+			WithColor(nextColor),
+		)
 	if selfcapture && !opponentCapture {
 		return ErrSelfcapture
 	}
