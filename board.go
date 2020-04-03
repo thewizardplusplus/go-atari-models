@@ -159,13 +159,14 @@ func (board Board) HasCapture(
 	}
 
 	var stones stoneGroup
-	if !configuration.filterByOrigin {
-		stones = board.stones
-	} else {
+	if configuration.filterByOrigin &&
+		!configuration.origin.IsNil() {
 		_, occupied := board.
 			StoneNeighbors(configuration.origin)
 		stones = board.stones.
 			CopyByPoints(occupied)
+	} else {
+		stones = board.stones
 	}
 
 	for point, color := range stones {

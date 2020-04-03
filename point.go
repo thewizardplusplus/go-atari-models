@@ -6,6 +6,16 @@ type Point struct {
 	Row    int
 }
 
+// ...
+var (
+	NilPoint = Point{-1, -1}
+)
+
+// IsNil ...
+func (point Point) IsNil() bool {
+	return point == NilPoint
+}
+
 // Translate ...
 func (point Point) Translate(
 	translation Point,
