@@ -39,3 +39,31 @@ func TestStoneGroupCopy(test *testing.T) {
 		test.Fail()
 	}
 }
+
+func TestStoneGroupCopyByPoints(
+	test *testing.T,
+) {
+	type args struct {
+		points []Point
+	}
+	type data struct {
+		stones  stoneGroup
+		args    args
+		process func(stones stoneGroup)
+		want    stoneGroup
+	}
+
+	for _, data := range []data{} {
+		got := data.stones.CopyByPoints(
+			data.args.points,
+		)
+		data.process(data.stones)
+
+		if !reflect.DeepEqual(
+			got,
+			data.want,
+		) {
+			test.Fail()
+		}
+	}
+}
