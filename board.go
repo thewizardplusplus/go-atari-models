@@ -4,6 +4,10 @@ import (
 	"errors"
 )
 
+const (
+	maximalNeighborCount = 4
+)
+
 // ...
 var (
 	ErrOutOfSize = errors.New(
@@ -53,7 +57,8 @@ func (board Board) Stone(
 // StoneNeighbors ...
 func (board Board) StoneNeighbors(
 	point Point,
-) (empty []Point, occupied []Point) {
+) PointGroup {
+	neighbors := make(PointGroup)
 	for _, shift := range []Point{
 		Point{0, -1},
 		Point{-1, 0},
@@ -66,13 +71,11 @@ func (board Board) StoneNeighbors(
 		}
 
 		if _, ok := board.stones[neighbor]; ok {
-			occupied = append(occupied, neighbor)
-		} else {
-			empty = append(empty, neighbor)
+			neighbors[neighbor] = struct{}{}
 		}
 	}
 
-	return empty, occupied
+	return neighbors
 }
 
 // StoneLiberties ...
@@ -85,7 +88,7 @@ func (board Board) StoneNeighbors(
 // the chain will be completed.
 func (board Board) StoneLiberties(
 	point Point,
-	chain map[Point]struct{},
+	chain PointGroup,
 ) int {
 	if _, ok := chain[point]; ok {
 		return 0
@@ -95,11 +98,11 @@ func (board Board) StoneLiberties(
 	chain[point] = struct{}{}
 
 	var liberties int
-	empty, occupied := board.
-		StoneNeighbors(point)
-	liberties += len(empty)
+	neighbors := board.StoneNeighbors(point)
+	liberties += maximalNeighborCount -
+		len(neighbors)
 
-	for _, neighbor := range occupied {
+	for neighbor := range neighbors {
 		color := board.stones[neighbor]
 		if color != baseColor {
 			continue
@@ -159,15 +162,16 @@ func (board Board) HasCapture(
 	}
 
 	var stones stoneGroup
-	if configuration.filterByOrigin &&
-		!configuration.origin.IsNil() {
-		_, occupied := board.
-			StoneNeighbors(configuration.origin)
-		stones = board.stones.
-			CopyByPoints(occupied)
-	} else {
-		stones = board.stones
-	}
+	/*if configuration.filterByOrigin &&
+	    !configuration.origin.IsNil() {
+	    neighbors := board.
+	      StoneNeighbors(configuration.origin)
+	    stones = board.stones.
+	      CopyByPoints(neighbors)
+	  } else {
+	    stones = board.stones
+	  }*/
+	stones = board.stones
 
 	for point, color := range stones {
 		if configuration.filterByColor &&
@@ -177,7 +181,7 @@ func (board Board) HasCapture(
 
 		liberties := board.StoneLiberties(
 			point,
-			make(map[Point]struct{}),
+			make(PointGroup),
 		)
 		if liberties == 0 {
 			return color, true

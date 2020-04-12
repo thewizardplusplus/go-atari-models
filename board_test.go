@@ -97,10 +97,9 @@ func TestBoardStoneNeighbors(
 		point Point
 	}
 	type data struct {
-		fields       fields
-		args         args
-		wantEmpty    []Point
-		wantOccupied []Point
+		fields fields
+		args   args
+		want   PointGroup
 	}
 
 	for _, data := range []data{
@@ -112,9 +111,10 @@ func TestBoardStoneNeighbors(
 					Point{1, 0}: White,
 				},
 			},
-			args:         args{Point{0, 0}},
-			wantEmpty:    []Point{Point{0, 1}},
-			wantOccupied: []Point{Point{1, 0}},
+			args: args{Point{0, 0}},
+			want: PointGroup{
+				Point{1, 0}: struct{}{},
+			},
 		},
 		data{
 			fields: fields{
@@ -125,11 +125,9 @@ func TestBoardStoneNeighbors(
 				},
 			},
 			args: args{Point{2, 0}},
-			wantEmpty: []Point{
-				Point{1, 0},
-				Point{2, 1},
+			want: PointGroup{
+				Point{3, 0}: struct{}{},
 			},
-			wantOccupied: []Point{Point{3, 0}},
 		},
 		data{
 			fields: fields{
@@ -141,13 +139,9 @@ func TestBoardStoneNeighbors(
 				},
 			},
 			args: args{Point{2, 2}},
-			wantEmpty: []Point{
-				Point{2, 1},
-				Point{1, 2},
-			},
-			wantOccupied: []Point{
-				Point{3, 2},
-				Point{2, 3},
+			want: PointGroup{
+				Point{3, 2}: struct{}{},
+				Point{2, 3}: struct{}{},
 			},
 		},
 		data{
@@ -158,13 +152,7 @@ func TestBoardStoneNeighbors(
 				},
 			},
 			args: args{Point{2, 2}},
-			wantEmpty: []Point{
-				Point{2, 1},
-				Point{1, 2},
-				Point{3, 2},
-				Point{2, 3},
-			},
-			wantOccupied: nil,
+			want: PointGroup{},
 		},
 		data{
 			fields: fields{
@@ -177,13 +165,12 @@ func TestBoardStoneNeighbors(
 					Point{2, 3}: White,
 				},
 			},
-			args:      args{Point{2, 2}},
-			wantEmpty: nil,
-			wantOccupied: []Point{
-				Point{2, 1},
-				Point{1, 2},
-				Point{3, 2},
-				Point{2, 3},
+			args: args{Point{2, 2}},
+			want: PointGroup{
+				Point{2, 1}: struct{}{},
+				Point{1, 2}: struct{}{},
+				Point{3, 2}: struct{}{},
+				Point{2, 3}: struct{}{},
 			},
 		},
 		data{
@@ -201,13 +188,12 @@ func TestBoardStoneNeighbors(
 					Point{3, 3}: White,
 				},
 			},
-			args:      args{Point{2, 2}},
-			wantEmpty: nil,
-			wantOccupied: []Point{
-				Point{2, 1},
-				Point{1, 2},
-				Point{3, 2},
-				Point{2, 3},
+			args: args{Point{2, 2}},
+			want: PointGroup{
+				Point{2, 1}: struct{}{},
+				Point{1, 2}: struct{}{},
+				Point{3, 2}: struct{}{},
+				Point{2, 3}: struct{}{},
 			},
 		},
 	} {
@@ -215,18 +201,12 @@ func TestBoardStoneNeighbors(
 			size:   data.fields.size,
 			stones: data.fields.stones,
 		}
-		gotEmpty, gotOccupied := board.
+		got := board.
 			StoneNeighbors(data.args.point)
 
 		if !reflect.DeepEqual(
-			gotEmpty,
-			data.wantEmpty,
-		) {
-			test.Fail()
-		}
-		if !reflect.DeepEqual(
-			gotOccupied,
-			data.wantOccupied,
+			got,
+			data.want,
 		) {
 			test.Fail()
 		}
@@ -242,13 +222,13 @@ func TestBoardStoneLiberties(
 	}
 	type args struct {
 		point Point
-		chain map[Point]struct{}
+		chain PointGroup
 	}
 	type data struct {
 		fields        fields
 		args          args
 		wantLiberties int
-		wantChain     map[Point]struct{}
+		wantChain     PointGroup
 	}
 
 	for _, data := range []data{
@@ -261,10 +241,10 @@ func TestBoardStoneLiberties(
 			},
 			args: args{
 				point: Point{2, 2},
-				chain: make(map[Point]struct{}),
+				chain: make(PointGroup),
 			},
 			wantLiberties: 4,
-			wantChain: map[Point]struct{}{
+			wantChain: PointGroup{
 				Point{2, 2}: struct{}{},
 			},
 		},
@@ -279,10 +259,10 @@ func TestBoardStoneLiberties(
 			},
 			args: args{
 				point: Point{2, 2},
-				chain: make(map[Point]struct{}),
+				chain: make(PointGroup),
 			},
 			wantLiberties: 2,
-			wantChain: map[Point]struct{}{
+			wantChain: PointGroup{
 				Point{2, 2}: struct{}{},
 			},
 		},
@@ -299,10 +279,10 @@ func TestBoardStoneLiberties(
 			},
 			args: args{
 				point: Point{2, 2},
-				chain: make(map[Point]struct{}),
+				chain: make(PointGroup),
 			},
 			wantLiberties: 0,
-			wantChain: map[Point]struct{}{
+			wantChain: PointGroup{
 				Point{2, 2}: struct{}{},
 			},
 		},
@@ -319,10 +299,10 @@ func TestBoardStoneLiberties(
 			},
 			args: args{
 				point: Point{2, 2},
-				chain: make(map[Point]struct{}),
+				chain: make(PointGroup),
 			},
 			wantLiberties: 12,
-			wantChain: map[Point]struct{}{
+			wantChain: PointGroup{
 				Point{2, 1}: struct{}{},
 				Point{1, 2}: struct{}{},
 				Point{2, 2}: struct{}{},
@@ -346,10 +326,10 @@ func TestBoardStoneLiberties(
 			},
 			args: args{
 				point: Point{2, 2},
-				chain: make(map[Point]struct{}),
+				chain: make(PointGroup),
 			},
 			wantLiberties: 8,
-			wantChain: map[Point]struct{}{
+			wantChain: PointGroup{
 				Point{2, 1}: struct{}{},
 				Point{1, 2}: struct{}{},
 				Point{2, 2}: struct{}{},
@@ -378,10 +358,10 @@ func TestBoardStoneLiberties(
 			},
 			args: args{
 				point: Point{2, 2},
-				chain: make(map[Point]struct{}),
+				chain: make(PointGroup),
 			},
 			wantLiberties: 0,
-			wantChain: map[Point]struct{}{
+			wantChain: PointGroup{
 				Point{2, 1}: struct{}{},
 				Point{1, 2}: struct{}{},
 				Point{2, 2}: struct{}{},

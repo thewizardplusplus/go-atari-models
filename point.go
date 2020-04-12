@@ -6,6 +6,9 @@ type Point struct {
 	Row    int
 }
 
+// PointGroup ...
+type PointGroup map[Point]struct{}
+
 // ...
 var (
 	NilPoint = Point{-1, -1}
