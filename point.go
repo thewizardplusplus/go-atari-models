@@ -6,8 +6,7 @@ type Point struct {
 	Row    int
 }
 
-// PointGroup ...
-type PointGroup map[Point]struct{}
+type pointGroup map[Point]struct{}
 
 // ...
 var (

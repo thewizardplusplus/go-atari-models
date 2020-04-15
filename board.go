@@ -97,16 +97,13 @@ func (board Board) HasCapture(
 	}
 
 	var stones stoneGroup
-	/*if configuration.filterByOrigin &&
-	    !configuration.origin.IsNil() {
-	    neighbors := board.
-	      StoneNeighbors(configuration.origin)
-	    stones = board.stones.
-	      CopyByPoints(neighbors)
-	  } else {
-	    stones = board.stones
-	  }*/
-	stones = board.stones
+	if configuration.filterByOrigin &&
+		!configuration.origin.IsNil() {
+		stones, _ = board.
+			neighbors(configuration.origin)
+	} else {
+		stones = board.stones
+	}
 
 	for point, color := range stones {
 		if configuration.filterByColor &&
@@ -116,7 +113,7 @@ func (board Board) HasCapture(
 
 		hasLiberties := board.hasLiberties(
 			point,
-			make(PointGroup),
+			make(pointGroup),
 		)
 		if !hasLiberties {
 			return color, true
@@ -225,7 +222,7 @@ func (board Board) LegalMoves(
 // (partially, if the result is true).
 func (board Board) hasLiberties(
 	point Point,
-	chain PointGroup,
+	chain pointGroup,
 ) bool {
 	if _, ok := chain[point]; ok {
 		return false

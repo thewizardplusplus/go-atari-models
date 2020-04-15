@@ -642,13 +642,13 @@ func TestBoardHasLiberties(
 	}
 	type args struct {
 		point Point
-		chain PointGroup
+		chain pointGroup
 	}
 	type data struct {
 		fields           fields
 		args             args
 		wantHasLiberties bool
-		wantChain        []PointGroup
+		wantChain        []pointGroup
 	}
 
 	for _, data := range []data{
@@ -661,11 +661,11 @@ func TestBoardHasLiberties(
 			},
 			args: args{
 				point: Point{2, 2},
-				chain: make(PointGroup),
+				chain: make(pointGroup),
 			},
 			wantHasLiberties: true,
-			wantChain: []PointGroup{
-				PointGroup{
+			wantChain: []pointGroup{
+				pointGroup{
 					Point{2, 2}: struct{}{},
 				},
 			},
@@ -681,11 +681,11 @@ func TestBoardHasLiberties(
 			},
 			args: args{
 				point: Point{2, 2},
-				chain: make(PointGroup),
+				chain: make(pointGroup),
 			},
 			wantHasLiberties: true,
-			wantChain: []PointGroup{
-				PointGroup{
+			wantChain: []pointGroup{
+				pointGroup{
 					Point{2, 2}: struct{}{},
 				},
 			},
@@ -703,11 +703,11 @@ func TestBoardHasLiberties(
 			},
 			args: args{
 				point: Point{2, 2},
-				chain: make(PointGroup),
+				chain: make(pointGroup),
 			},
 			wantHasLiberties: false,
-			wantChain: []PointGroup{
-				PointGroup{
+			wantChain: []pointGroup{
+				pointGroup{
 					Point{2, 2}: struct{}{},
 				},
 			},
@@ -725,23 +725,23 @@ func TestBoardHasLiberties(
 			},
 			args: args{
 				point: Point{2, 2},
-				chain: make(PointGroup),
+				chain: make(pointGroup),
 			},
 			wantHasLiberties: true,
-			wantChain: []PointGroup{
-				PointGroup{
+			wantChain: []pointGroup{
+				pointGroup{
 					Point{2, 1}: struct{}{},
 					Point{2, 2}: struct{}{},
 				},
-				PointGroup{
+				pointGroup{
 					Point{1, 2}: struct{}{},
 					Point{2, 2}: struct{}{},
 				},
-				PointGroup{
+				pointGroup{
 					Point{2, 2}: struct{}{},
 					Point{3, 2}: struct{}{},
 				},
-				PointGroup{
+				pointGroup{
 					Point{2, 2}: struct{}{},
 					Point{2, 3}: struct{}{},
 				},
@@ -763,23 +763,23 @@ func TestBoardHasLiberties(
 			},
 			args: args{
 				point: Point{2, 2},
-				chain: make(PointGroup),
+				chain: make(pointGroup),
 			},
 			wantHasLiberties: true,
-			wantChain: []PointGroup{
-				PointGroup{
+			wantChain: []pointGroup{
+				pointGroup{
 					Point{2, 1}: struct{}{},
 					Point{2, 2}: struct{}{},
 				},
-				PointGroup{
+				pointGroup{
 					Point{1, 2}: struct{}{},
 					Point{2, 2}: struct{}{},
 				},
-				PointGroup{
+				pointGroup{
 					Point{2, 2}: struct{}{},
 					Point{3, 2}: struct{}{},
 				},
-				PointGroup{
+				pointGroup{
 					Point{2, 2}: struct{}{},
 					Point{2, 3}: struct{}{},
 				},
@@ -806,11 +806,11 @@ func TestBoardHasLiberties(
 			},
 			args: args{
 				point: Point{2, 2},
-				chain: make(PointGroup),
+				chain: make(pointGroup),
 			},
 			wantHasLiberties: false,
-			wantChain: []PointGroup{
-				PointGroup{
+			wantChain: []pointGroup{
+				pointGroup{
 					Point{2, 1}: struct{}{},
 					Point{1, 2}: struct{}{},
 					Point{2, 2}: struct{}{},
