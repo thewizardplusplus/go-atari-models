@@ -54,30 +54,6 @@ func (board Board) Stone(
 	return color, ok
 }
 
-// StoneNeighbors ...
-func (board Board) StoneNeighbors(
-	point Point,
-) PointGroup {
-	neighbors := make(PointGroup)
-	for _, shift := range []Point{
-		Point{0, -1},
-		Point{-1, 0},
-		Point{1, 0},
-		Point{0, 1},
-	} {
-		neighbor := point.Translate(shift)
-		if !board.size.HasPoint(neighbor) {
-			continue
-		}
-
-		if _, ok := board.stones[neighbor]; ok {
-			neighbors[neighbor] = struct{}{}
-		}
-	}
-
-	return neighbors
-}
-
 // StoneLiberties ...
 //
 // There should be a stone at the point.
@@ -98,7 +74,7 @@ func (board Board) StoneLiberties(
 	chain[point] = struct{}{}
 
 	var liberties int
-	neighbors := board.StoneNeighbors(point)
+	neighbors, _ := board.neighbors(point)
 	liberties += maximalNeighborCount -
 		len(neighbors)
 
@@ -279,4 +255,33 @@ func (board Board) LegalMoves(
 	}
 
 	return moves, nil
+}
+
+func (board Board) neighbors(
+	point Point,
+) (
+	neighbors stoneGroup,
+	hasLiberties bool,
+) {
+	neighbors = make(stoneGroup)
+	for _, shift := range []Point{
+		Point{0, -1},
+		Point{-1, 0},
+		Point{1, 0},
+		Point{0, 1},
+	} {
+		neighbor := point.Translate(shift)
+		if !board.size.HasPoint(neighbor) {
+			continue
+		}
+
+		color, ok := board.stones[neighbor]
+		if ok {
+			neighbors[neighbor] = color
+		} else {
+			hasLiberties = true
+		}
+	}
+
+	return neighbors, hasLiberties
 }
