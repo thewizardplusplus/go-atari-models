@@ -4,10 +4,6 @@ import (
 	"errors"
 )
 
-const (
-	maximalNeighborCount = 4
-)
-
 // ...
 var (
 	ErrOutOfSize = errors.New(
@@ -52,43 +48,6 @@ func (board Board) Stone(
 ) (color Color, ok bool) {
 	color, ok = board.stones[point]
 	return color, ok
-}
-
-// StoneLiberties ...
-//
-// There should be a stone at the point.
-//
-// The chain shouldn't be nil.
-//
-// After finishing the function
-// the chain will be completed.
-func (board Board) StoneLiberties(
-	point Point,
-	chain PointGroup,
-) int {
-	if _, ok := chain[point]; ok {
-		return 0
-	}
-
-	baseColor := board.stones[point]
-	chain[point] = struct{}{}
-
-	var liberties int
-	neighbors, _ := board.neighbors(point)
-	liberties += maximalNeighborCount -
-		len(neighbors)
-
-	for neighbor := range neighbors {
-		color := board.stones[neighbor]
-		if color != baseColor {
-			continue
-		}
-
-		liberties +=
-			board.StoneLiberties(neighbor, chain)
-	}
-
-	return liberties
 }
 
 // HasCaptureConfiguration ...
@@ -155,11 +114,11 @@ func (board Board) HasCapture(
 			continue
 		}
 
-		liberties := board.StoneLiberties(
+		hasLiberties := board.hasLiberties(
 			point,
 			make(PointGroup),
 		)
-		if liberties == 0 {
+		if !hasLiberties {
 			return color, true
 		}
 	}
@@ -255,6 +214,46 @@ func (board Board) LegalMoves(
 	}
 
 	return moves, nil
+}
+
+// There should be a stone at the point.
+//
+// The chain shouldn't be nil.
+//
+// After finishing the function
+// the chain will be filled
+// (partially, if the result is true).
+func (board Board) hasLiberties(
+	point Point,
+	chain PointGroup,
+) bool {
+	if _, ok := chain[point]; ok {
+		return false
+	}
+
+	baseColor := board.stones[point]
+	chain[point] = struct{}{}
+
+	neighbors, hasLiberties :=
+		board.neighbors(point)
+	if hasLiberties {
+		return true
+	}
+
+	for neighbor := range neighbors {
+		color := board.stones[neighbor]
+		if color != baseColor {
+			continue
+		}
+
+		hasLiberties :=
+			board.hasLiberties(neighbor, chain)
+		if hasLiberties {
+			return true
+		}
+	}
+
+	return false
 }
 
 func (board Board) neighbors(
