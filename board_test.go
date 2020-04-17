@@ -244,6 +244,157 @@ func TestBoardHasCapture(test *testing.T) {
 			fields: fields{
 				size: Size{5, 5},
 				stones: stoneGroup{
+					Point{2, 1}: Black,
+					Point{1, 2}: Black,
+					Point{2, 2}: Black,
+					Point{3, 2}: Black,
+					Point{4, 2}: White,
+					Point{2, 3}: Black,
+					Point{3, 3}: White,
+					Point{2, 4}: White,
+				},
+			},
+			args: args{
+				options: []HasCaptureOption{
+					WithOrigin(Point{4, 2}),
+				},
+			},
+			wantColor: 0,
+			wantOk:    false,
+		},
+		data{
+			fields: fields{
+				size: Size{5, 5},
+				stones: stoneGroup{
+					Point{2, 0}: White,
+					Point{1, 1}: White,
+					Point{2, 1}: Black,
+					Point{3, 1}: White,
+					Point{0, 2}: White,
+					Point{1, 2}: Black,
+					Point{2, 2}: Black,
+					Point{3, 2}: Black,
+					Point{4, 2}: White,
+					Point{1, 3}: White,
+					Point{2, 3}: Black,
+					Point{3, 3}: White,
+					Point{2, 4}: White,
+				},
+			},
+			args: args{
+				options: []HasCaptureOption{
+					WithOrigin(Point{4, 2}),
+				},
+			},
+			wantColor: Black,
+			wantOk:    true,
+		},
+		data{
+			fields: fields{
+				size: Size{5, 5},
+				stones: stoneGroup{
+					Point{2, 1}: Black,
+					Point{1, 2}: Black,
+					Point{2, 2}: Black,
+					Point{3, 2}: Black,
+					Point{4, 2}: White,
+					Point{2, 3}: Black,
+					Point{3, 3}: White,
+					Point{2, 4}: White,
+				},
+			},
+			args: args{
+				options: []HasCaptureOption{
+					WithColor(Black),
+					WithOrigin(Point{4, 2}),
+				},
+			},
+			wantColor: 0,
+			wantOk:    false,
+		},
+		data{
+			fields: fields{
+				size: Size{5, 5},
+				stones: stoneGroup{
+					Point{2, 1}: Black,
+					Point{1, 2}: Black,
+					Point{2, 2}: Black,
+					Point{3, 2}: Black,
+					Point{4, 2}: White,
+					Point{2, 3}: Black,
+					Point{3, 3}: White,
+					Point{2, 4}: White,
+				},
+			},
+			args: args{
+				options: []HasCaptureOption{
+					WithColor(White),
+					WithOrigin(Point{4, 2}),
+				},
+			},
+			wantColor: 0,
+			wantOk:    false,
+		},
+		data{
+			fields: fields{
+				size: Size{5, 5},
+				stones: stoneGroup{
+					Point{2, 0}: White,
+					Point{1, 1}: White,
+					Point{2, 1}: Black,
+					Point{3, 1}: White,
+					Point{0, 2}: White,
+					Point{1, 2}: Black,
+					Point{2, 2}: Black,
+					Point{3, 2}: Black,
+					Point{4, 2}: White,
+					Point{1, 3}: White,
+					Point{2, 3}: Black,
+					Point{3, 3}: White,
+					Point{2, 4}: White,
+				},
+			},
+			args: args{
+				options: []HasCaptureOption{
+					WithColor(Black),
+					WithOrigin(Point{4, 2}),
+				},
+			},
+			wantColor: Black,
+			wantOk:    true,
+		},
+		data{
+			fields: fields{
+				size: Size{5, 5},
+				stones: stoneGroup{
+					Point{2, 0}: White,
+					Point{1, 1}: White,
+					Point{2, 1}: Black,
+					Point{3, 1}: White,
+					Point{0, 2}: White,
+					Point{1, 2}: Black,
+					Point{2, 2}: Black,
+					Point{3, 2}: Black,
+					Point{4, 2}: White,
+					Point{1, 3}: White,
+					Point{2, 3}: Black,
+					Point{3, 3}: White,
+					Point{2, 4}: White,
+				},
+			},
+			args: args{
+				options: []HasCaptureOption{
+					WithColor(White),
+					WithOrigin(Point{4, 2}),
+				},
+			},
+			wantColor: 0,
+			wantOk:    false,
+		},
+		data{
+			fields: fields{
+				size: Size{5, 5},
+				stones: stoneGroup{
 					Point{0, 0}: Black,
 					Point{0, 1}: White,
 					Point{1, 0}: White,
@@ -275,8 +426,9 @@ func TestBoardHasCapture(test *testing.T) {
 			size:   data.fields.size,
 			stones: data.fields.stones,
 		}
-		gotColor, gotOk :=
-			board.HasCapture(data.args.options...)
+		gotColor, gotOk := board.HasCapture(
+			data.args.options...,
+		)
 
 		if gotColor != data.wantColor {
 			test.Fail()

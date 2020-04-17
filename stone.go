@@ -1,5 +1,7 @@
 package atarimodels
 
+type stoneFilter func(Point, Color) bool
+
 type stoneGroup map[Point]Color
 
 // It doesn't check that the move is correct.
