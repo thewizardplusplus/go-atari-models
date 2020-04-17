@@ -76,6 +76,9 @@ func WithColor(
 }
 
 // WithOrigin ...
+//
+// There should be a stone
+// at the origin point.
 func WithOrigin(
 	origin Point,
 ) HasCaptureOption {
@@ -101,6 +104,10 @@ func (board Board) HasCapture(
 		!configuration.origin.IsNil() {
 		stones, _ = board.
 			neighbors(configuration.origin)
+
+		// copy the origin stone
+		stones[configuration.origin] =
+			board.stones[configuration.origin]
 	} else {
 		stones = board.stones
 	}
@@ -153,10 +160,12 @@ func (board Board) CheckMove(
 	_, selfcapture :=
 		nextBoard.HasCapture(
 			WithColor(move.Color),
+			WithOrigin(move.Point),
 		)
 	_, opponentCapture :=
 		nextBoard.HasCapture(
 			WithColor(nextColor),
+			WithOrigin(move.Point),
 		)
 	if selfcapture && !opponentCapture {
 		return ErrSelfcapture
