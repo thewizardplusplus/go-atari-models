@@ -10,7 +10,10 @@ func TestNewPreliminaryMove(
 ) {
 	got := NewPreliminaryMove(Black)
 
-	want := Move{Color: White}
+	want := Move{
+		Color: White,
+		Point: NilPoint,
+	}
 	if !reflect.DeepEqual(got, want) {
 		test.Fail()
 	}
