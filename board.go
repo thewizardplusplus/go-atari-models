@@ -79,6 +79,9 @@ func WithColor(
 //
 // There should be a stone
 // at the origin point.
+//
+// If the origin is NilPoint,
+// then it'll be ignored.
 func WithOrigin(
 	origin Point,
 ) HasCaptureOption {
@@ -198,12 +201,15 @@ func (board Board) PseudolegalMoves(
 // Returned error can be
 // ErrAlreadyLoss or ErrAlreadyWin only.
 func (board Board) LegalMoves(
-	color Color,
+	previousMove Move,
 ) ([]Move, error) {
-	captureColor, ok := board.HasCapture()
+	nextColor := previousMove.Color.Negative()
+	captureColor, ok := board.HasCapture(
+		WithOrigin(previousMove.Point),
+	)
 	if ok {
 		var err error
-		if captureColor == color {
+		if captureColor == nextColor {
 			err = ErrAlreadyLoss
 		} else {
 			err = ErrAlreadyWin
@@ -212,7 +218,7 @@ func (board Board) LegalMoves(
 		return nil, err
 	}
 
-	moves := board.PseudolegalMoves(color)
+	moves := board.PseudolegalMoves(nextColor)
 	if len(moves) == 0 {
 		// game result in this case
 		// depends on used game rules

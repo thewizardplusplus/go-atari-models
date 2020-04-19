@@ -477,7 +477,7 @@ func TestBoardCheckMove(test *testing.T) {
 		want   error
 	}
 
-	for i, data := range []data{
+	for _, data := range []data{
 		data{
 			fields: fields{
 				size: Size{5, 5},
@@ -572,7 +572,6 @@ func TestBoardCheckMove(test *testing.T) {
 		got := board.CheckMove(data.args.move)
 
 		if got != data.want {
-			test.Log(i, got, data.want)
 			test.Fail()
 		}
 	}
@@ -674,7 +673,7 @@ func TestBoardLegalMoves(test *testing.T) {
 		stones stoneGroup
 	}
 	type args struct {
-		color Color
+		previousMove Move
 	}
 	type data struct {
 		fields    fields
@@ -692,7 +691,12 @@ func TestBoardLegalMoves(test *testing.T) {
 					Point{2, 0}: White,
 				},
 			},
-			args: args{White},
+			args: args{
+				previousMove: Move{
+					Color: Black,
+					Point: Point{0, 2},
+				},
+			},
 			wantMoves: []Move{
 				Move{White, Point{0, 0}},
 				Move{White, Point{1, 0}},
@@ -713,7 +717,12 @@ func TestBoardLegalMoves(test *testing.T) {
 					Point{1, 0}: White,
 				},
 			},
-			args:      args{Black},
+			args: args{
+				previousMove: Move{
+					Color: White,
+					Point: Point{1, 0},
+				},
+			},
 			wantMoves: nil,
 			wantErr:   ErrAlreadyLoss,
 		},
@@ -726,7 +735,12 @@ func TestBoardLegalMoves(test *testing.T) {
 					Point{1, 0}: White,
 				},
 			},
-			args:      args{White},
+			args: args{
+				previousMove: Move{
+					Color: Black,
+					Point: Point{0, 0},
+				},
+			},
 			wantMoves: nil,
 			wantErr:   ErrAlreadyWin,
 		},
@@ -743,7 +757,12 @@ func TestBoardLegalMoves(test *testing.T) {
 					Point{1, 2}: White,
 				},
 			},
-			args:      args{Black},
+			args: args{
+				previousMove: Move{
+					Color: White,
+					Point: Point{1, 2},
+				},
+			},
 			wantMoves: nil,
 			wantErr:   ErrAlreadyLoss,
 		},
@@ -762,7 +781,12 @@ func TestBoardLegalMoves(test *testing.T) {
 					Point{2, 2}: White,
 				},
 			},
-			args:      args{Black},
+			args: args{
+				previousMove: Move{
+					Color: White,
+					Point: Point{2, 2},
+				},
+			},
 			wantMoves: nil,
 			wantErr:   ErrAlreadyWin,
 		},
@@ -771,8 +795,9 @@ func TestBoardLegalMoves(test *testing.T) {
 			size:   data.fields.size,
 			stones: data.fields.stones,
 		}
-		gotMoves, gotErr :=
-			board.LegalMoves(data.args.color)
+		gotMoves, gotErr := board.LegalMoves(
+			data.args.previousMove,
+		)
 
 		if !reflect.DeepEqual(
 			gotMoves,
