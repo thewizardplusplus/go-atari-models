@@ -28,12 +28,12 @@ var (
 // Board ...
 type Board struct {
 	size   Size
-	stones stoneGroup
+	stones StoneGroup
 }
 
 // NewBoard ...
 func NewBoard(size Size) Board {
-	stones := make(stoneGroup)
+	stones := make(StoneGroup)
 	return Board{size, stones}
 }
 
@@ -48,6 +48,36 @@ func (board Board) Stone(
 ) (color Color, ok bool) {
 	color, ok = board.stones[point]
 	return color, ok
+}
+
+// StoneNeighbors ...
+func (board Board) StoneNeighbors(
+	point Point,
+) (
+	neighbors StoneGroup,
+	hasStoneLiberties bool,
+) {
+	neighbors = make(StoneGroup)
+	for _, shift := range []Point{
+		Point{0, -1},
+		Point{-1, 0},
+		Point{1, 0},
+		Point{0, 1},
+	} {
+		neighbor := point.Translate(shift)
+		if !board.size.HasPoint(neighbor) {
+			continue
+		}
+
+		color, ok := board.stones[neighbor]
+		if ok {
+			neighbors[neighbor] = color
+		} else {
+			hasStoneLiberties = true
+		}
+	}
+
+	return neighbors, hasStoneLiberties
 }
 
 // HasCaptureConfiguration ...
@@ -102,11 +132,11 @@ func (board Board) HasCapture(
 		option(&configuration)
 	}
 
-	var stones stoneGroup
+	var stones StoneGroup
 	if configuration.filterByOrigin &&
 		!configuration.origin.IsNil() {
 		stones, _ = board.
-			neighbors(configuration.origin)
+			StoneNeighbors(configuration.origin)
 
 		// copy the origin stone
 		stones[configuration.origin] =
@@ -246,9 +276,9 @@ func (board Board) hasLiberties(
 	baseColor := board.stones[point]
 	chain[point] = struct{}{}
 
-	neighbors, hasLiberties :=
-		board.neighbors(point)
-	if hasLiberties {
+	neighbors, hasStoneLiberties :=
+		board.StoneNeighbors(point)
+	if hasStoneLiberties {
 		return true
 	}
 
@@ -266,33 +296,4 @@ func (board Board) hasLiberties(
 	}
 
 	return false
-}
-
-func (board Board) neighbors(
-	point Point,
-) (
-	neighbors stoneGroup,
-	hasLiberties bool,
-) {
-	neighbors = make(stoneGroup)
-	for _, shift := range []Point{
-		Point{0, -1},
-		Point{-1, 0},
-		Point{1, 0},
-		Point{0, 1},
-	} {
-		neighbor := point.Translate(shift)
-		if !board.size.HasPoint(neighbor) {
-			continue
-		}
-
-		color, ok := board.stones[neighbor]
-		if ok {
-			neighbors[neighbor] = color
-		} else {
-			hasLiberties = true
-		}
-	}
-
-	return neighbors, hasLiberties
 }

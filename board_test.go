@@ -10,7 +10,7 @@ func TestNewBoard(test *testing.T) {
 
 	expectedBoard := Board{
 		size:   Size{5, 5},
-		stones: make(stoneGroup),
+		stones: make(StoneGroup),
 	}
 	if !reflect.DeepEqual(
 		board,
@@ -32,7 +32,7 @@ func TestBoardSize(test *testing.T) {
 func TestBoardStone(test *testing.T) {
 	type fields struct {
 		size   Size
-		stones stoneGroup
+		stones StoneGroup
 	}
 	type args struct {
 		point Point
@@ -48,7 +48,7 @@ func TestBoardStone(test *testing.T) {
 		data{
 			fields: fields{
 				size: Size{5, 5},
-				stones: stoneGroup{
+				stones: StoneGroup{
 					Point{2, 3}: Black,
 					Point{3, 2}: White,
 				},
@@ -60,7 +60,7 @@ func TestBoardStone(test *testing.T) {
 		data{
 			fields: fields{
 				size: Size{5, 5},
-				stones: stoneGroup{
+				stones: StoneGroup{
 					Point{2, 3}: Black,
 					Point{3, 2}: White,
 				},
@@ -86,10 +86,160 @@ func TestBoardStone(test *testing.T) {
 	}
 }
 
+func TestBoardStoneNeighbors(
+	test *testing.T,
+) {
+	type fields struct {
+		size   Size
+		stones StoneGroup
+	}
+	type args struct {
+		point Point
+	}
+	type data struct {
+		fields                fields
+		args                  args
+		wantNeighbors         StoneGroup
+		wantHasStoneLiberties bool
+	}
+
+	for _, data := range []data{
+		data{
+			fields: fields{
+				size: Size{5, 5},
+				stones: StoneGroup{
+					Point{0, 0}: Black,
+					Point{1, 0}: White,
+				},
+			},
+			args: args{
+				point: Point{0, 0},
+			},
+			wantNeighbors: StoneGroup{
+				Point{1, 0}: White,
+			},
+			wantHasStoneLiberties: true,
+		},
+		data{
+			fields: fields{
+				size: Size{5, 5},
+				stones: StoneGroup{
+					Point{2, 0}: Black,
+					Point{3, 0}: White,
+				},
+			},
+			args: args{
+				point: Point{2, 0},
+			},
+			wantNeighbors: StoneGroup{
+				Point{3, 0}: White,
+			},
+			wantHasStoneLiberties: true,
+		},
+		data{
+			fields: fields{
+				size: Size{5, 5},
+				stones: StoneGroup{
+					Point{2, 2}: Black,
+					Point{3, 2}: White,
+					Point{2, 3}: White,
+				},
+			},
+			args: args{
+				point: Point{2, 2},
+			},
+			wantNeighbors: StoneGroup{
+				Point{3, 2}: White,
+				Point{2, 3}: White,
+			},
+			wantHasStoneLiberties: true,
+		},
+		data{
+			fields: fields{
+				size: Size{5, 5},
+				stones: StoneGroup{
+					Point{2, 2}: Black,
+				},
+			},
+			args: args{
+				point: Point{2, 2},
+			},
+			wantNeighbors:         StoneGroup{},
+			wantHasStoneLiberties: true,
+		},
+		data{
+			fields: fields{
+				size: Size{5, 5},
+				stones: StoneGroup{
+					Point{2, 1}: White,
+					Point{1, 2}: White,
+					Point{2, 2}: Black,
+					Point{3, 2}: White,
+					Point{2, 3}: White,
+				},
+			},
+			args: args{
+				point: Point{2, 2},
+			},
+			wantNeighbors: StoneGroup{
+				Point{2, 1}: White,
+				Point{1, 2}: White,
+				Point{3, 2}: White,
+				Point{2, 3}: White,
+			},
+			wantHasStoneLiberties: false,
+		},
+		data{
+			fields: fields{
+				size: Size{5, 5},
+				stones: StoneGroup{
+					Point{1, 1}: White,
+					Point{2, 1}: White,
+					Point{3, 1}: White,
+					Point{1, 2}: White,
+					Point{2, 2}: Black,
+					Point{3, 2}: White,
+					Point{1, 3}: White,
+					Point{2, 3}: White,
+					Point{3, 3}: White,
+				},
+			},
+			args: args{
+				point: Point{2, 2},
+			},
+			wantNeighbors: StoneGroup{
+				Point{2, 1}: White,
+				Point{1, 2}: White,
+				Point{3, 2}: White,
+				Point{2, 3}: White,
+			},
+			wantHasStoneLiberties: false,
+		},
+	} {
+		board := Board{
+			size:   data.fields.size,
+			stones: data.fields.stones,
+		}
+		gotNeighbors, gotHasStoneLiberties :=
+			board.StoneNeighbors(data.args.point)
+
+		if !reflect.DeepEqual(
+			gotNeighbors,
+			data.wantNeighbors,
+		) {
+			test.Fail()
+		}
+		if gotHasStoneLiberties !=
+			data.wantHasStoneLiberties {
+			test.Fail()
+		}
+	}
+}
+
 func TestBoardHasCapture(test *testing.T) {
 	type fields struct {
 		size   Size
-		stones stoneGroup
+		stones StoneGroup
 	}
 	type args struct {
 		options []HasCaptureOption
@@ -105,7 +255,7 @@ func TestBoardHasCapture(test *testing.T) {
 		data{
 			fields: fields{
 				size: Size{5, 5},
-				stones: stoneGroup{
+				stones: StoneGroup{
 					Point{2, 1}: Black,
 					Point{1, 2}: Black,
 					Point{2, 2}: Black,
@@ -127,7 +277,7 @@ func TestBoardHasCapture(test *testing.T) {
 		data{
 			fields: fields{
 				size: Size{5, 5},
-				stones: stoneGroup{
+				stones: StoneGroup{
 					Point{2, 1}: Black,
 					Point{1, 2}: Black,
 					Point{2, 2}: Black,
@@ -149,7 +299,7 @@ func TestBoardHasCapture(test *testing.T) {
 		data{
 			fields: fields{
 				size: Size{5, 5},
-				stones: stoneGroup{
+				stones: StoneGroup{
 					Point{2, 0}: White,
 					Point{1, 1}: White,
 					Point{2, 1}: Black,
@@ -176,7 +326,7 @@ func TestBoardHasCapture(test *testing.T) {
 		data{
 			fields: fields{
 				size: Size{5, 5},
-				stones: stoneGroup{
+				stones: StoneGroup{
 					Point{2, 0}: White,
 					Point{1, 1}: White,
 					Point{2, 1}: Black,
@@ -203,7 +353,7 @@ func TestBoardHasCapture(test *testing.T) {
 		data{
 			fields: fields{
 				size: Size{5, 5},
-				stones: stoneGroup{
+				stones: StoneGroup{
 					Point{0, 0}: Black,
 					Point{0, 1}: White,
 					Point{1, 0}: White,
@@ -223,7 +373,7 @@ func TestBoardHasCapture(test *testing.T) {
 		data{
 			fields: fields{
 				size: Size{5, 5},
-				stones: stoneGroup{
+				stones: StoneGroup{
 					Point{0, 0}: Black,
 					Point{0, 1}: White,
 					Point{1, 0}: White,
@@ -243,7 +393,7 @@ func TestBoardHasCapture(test *testing.T) {
 		data{
 			fields: fields{
 				size: Size{5, 5},
-				stones: stoneGroup{
+				stones: StoneGroup{
 					Point{2, 1}: Black,
 					Point{1, 2}: Black,
 					Point{2, 2}: Black,
@@ -265,7 +415,7 @@ func TestBoardHasCapture(test *testing.T) {
 		data{
 			fields: fields{
 				size: Size{5, 5},
-				stones: stoneGroup{
+				stones: StoneGroup{
 					Point{2, 0}: White,
 					Point{1, 1}: White,
 					Point{2, 1}: Black,
@@ -292,7 +442,7 @@ func TestBoardHasCapture(test *testing.T) {
 		data{
 			fields: fields{
 				size: Size{5, 5},
-				stones: stoneGroup{
+				stones: StoneGroup{
 					Point{2, 1}: Black,
 					Point{1, 2}: Black,
 					Point{2, 2}: Black,
@@ -315,7 +465,7 @@ func TestBoardHasCapture(test *testing.T) {
 		data{
 			fields: fields{
 				size: Size{5, 5},
-				stones: stoneGroup{
+				stones: StoneGroup{
 					Point{2, 1}: Black,
 					Point{1, 2}: Black,
 					Point{2, 2}: Black,
@@ -338,7 +488,7 @@ func TestBoardHasCapture(test *testing.T) {
 		data{
 			fields: fields{
 				size: Size{5, 5},
-				stones: stoneGroup{
+				stones: StoneGroup{
 					Point{2, 0}: White,
 					Point{1, 1}: White,
 					Point{2, 1}: Black,
@@ -366,7 +516,7 @@ func TestBoardHasCapture(test *testing.T) {
 		data{
 			fields: fields{
 				size: Size{5, 5},
-				stones: stoneGroup{
+				stones: StoneGroup{
 					Point{2, 0}: White,
 					Point{1, 1}: White,
 					Point{2, 1}: Black,
@@ -394,7 +544,7 @@ func TestBoardHasCapture(test *testing.T) {
 		data{
 			fields: fields{
 				size: Size{5, 5},
-				stones: stoneGroup{
+				stones: StoneGroup{
 					Point{0, 0}: Black,
 					Point{0, 1}: White,
 					Point{1, 0}: White,
@@ -409,7 +559,7 @@ func TestBoardHasCapture(test *testing.T) {
 		data{
 			fields: fields{
 				size: Size{5, 5},
-				stones: stoneGroup{
+				stones: StoneGroup{
 					Point{4, 3}: Black,
 					Point{3, 4}: Black,
 					Point{4, 4}: White,
@@ -450,7 +600,7 @@ func TestBoardApplyMove(test *testing.T) {
 
 	expectedBoard := Board{
 		size: Size{5, 5},
-		stones: stoneGroup{
+		stones: StoneGroup{
 			Point{2, 3}: Black,
 			Point{3, 2}: White,
 		},
@@ -466,7 +616,7 @@ func TestBoardApplyMove(test *testing.T) {
 func TestBoardCheckMove(test *testing.T) {
 	type fields struct {
 		size   Size
-		stones stoneGroup
+		stones StoneGroup
 	}
 	type args struct {
 		move Move
@@ -481,7 +631,7 @@ func TestBoardCheckMove(test *testing.T) {
 		data{
 			fields: fields{
 				size: Size{5, 5},
-				stones: stoneGroup{
+				stones: StoneGroup{
 					Point{2, 3}: Black,
 					Point{3, 2}: White,
 				},
@@ -494,7 +644,7 @@ func TestBoardCheckMove(test *testing.T) {
 		data{
 			fields: fields{
 				size: Size{5, 5},
-				stones: stoneGroup{
+				stones: StoneGroup{
 					Point{2, 3}: Black,
 					Point{3, 2}: White,
 				},
@@ -507,7 +657,7 @@ func TestBoardCheckMove(test *testing.T) {
 		data{
 			fields: fields{
 				size: Size{5, 5},
-				stones: stoneGroup{
+				stones: StoneGroup{
 					Point{2, 3}: Black,
 					Point{3, 2}: White,
 				},
@@ -520,7 +670,7 @@ func TestBoardCheckMove(test *testing.T) {
 		data{
 			fields: fields{
 				size: Size{5, 5},
-				stones: stoneGroup{
+				stones: StoneGroup{
 					Point{2, 1}: White,
 					Point{1, 2}: White,
 					Point{3, 2}: White,
@@ -535,7 +685,7 @@ func TestBoardCheckMove(test *testing.T) {
 		data{
 			fields: fields{
 				size: Size{5, 5},
-				stones: stoneGroup{
+				stones: StoneGroup{
 					Point{2, 3}: Black,
 				},
 			},
@@ -549,7 +699,7 @@ func TestBoardCheckMove(test *testing.T) {
 		data{
 			fields: fields{
 				size: Size{5, 5},
-				stones: stoneGroup{
+				stones: StoneGroup{
 					Point{1, 1}: Black,
 					Point{2, 1}: White,
 					Point{0, 2}: Black,
@@ -582,7 +732,7 @@ func TestBoardPseudolegalMoves(
 ) {
 	type fields struct {
 		size   Size
-		stones stoneGroup
+		stones StoneGroup
 	}
 	type args struct {
 		color Color
@@ -615,7 +765,7 @@ func TestBoardPseudolegalMoves(
 		data{
 			fields: fields{
 				size: Size{3, 3},
-				stones: stoneGroup{
+				stones: StoneGroup{
 					Point{0, 2}: Black,
 					Point{2, 0}: White,
 				},
@@ -634,7 +784,7 @@ func TestBoardPseudolegalMoves(
 		data{
 			fields: fields{
 				size: Size{3, 3},
-				stones: stoneGroup{
+				stones: StoneGroup{
 					Point{0, 1}: Black,
 					Point{1, 0}: Black,
 				},
@@ -670,7 +820,7 @@ func TestBoardPseudolegalMoves(
 func TestBoardLegalMoves(test *testing.T) {
 	type fields struct {
 		size   Size
-		stones stoneGroup
+		stones StoneGroup
 	}
 	type args struct {
 		previousMove Move
@@ -686,7 +836,7 @@ func TestBoardLegalMoves(test *testing.T) {
 		data{
 			fields: fields{
 				size: Size{3, 3},
-				stones: stoneGroup{
+				stones: StoneGroup{
 					Point{0, 2}: Black,
 					Point{2, 0}: White,
 				},
@@ -711,7 +861,7 @@ func TestBoardLegalMoves(test *testing.T) {
 		data{
 			fields: fields{
 				size: Size{3, 3},
-				stones: stoneGroup{
+				stones: StoneGroup{
 					Point{0, 0}: Black,
 					Point{0, 1}: White,
 					Point{1, 0}: White,
@@ -729,7 +879,7 @@ func TestBoardLegalMoves(test *testing.T) {
 		data{
 			fields: fields{
 				size: Size{3, 3},
-				stones: stoneGroup{
+				stones: StoneGroup{
 					Point{0, 0}: Black,
 					Point{0, 1}: White,
 					Point{1, 0}: White,
@@ -747,7 +897,7 @@ func TestBoardLegalMoves(test *testing.T) {
 		data{
 			fields: fields{
 				size: Size{3, 3},
-				stones: stoneGroup{
+				stones: StoneGroup{
 					Point{1, 0}: White,
 					Point{2, 0}: White,
 					Point{0, 1}: White,
@@ -769,7 +919,7 @@ func TestBoardLegalMoves(test *testing.T) {
 		data{
 			fields: fields{
 				size: Size{3, 3},
-				stones: stoneGroup{
+				stones: StoneGroup{
 					Point{0, 0}: White,
 					Point{1, 0}: White,
 					Point{2, 0}: White,
@@ -816,7 +966,7 @@ func TestBoardHasLiberties(
 ) {
 	type fields struct {
 		size   Size
-		stones stoneGroup
+		stones StoneGroup
 	}
 	type args struct {
 		point Point
@@ -833,7 +983,7 @@ func TestBoardHasLiberties(
 		data{
 			fields: fields{
 				size: Size{5, 5},
-				stones: stoneGroup{
+				stones: StoneGroup{
 					Point{2, 2}: Black,
 				},
 			},
@@ -851,7 +1001,7 @@ func TestBoardHasLiberties(
 		data{
 			fields: fields{
 				size: Size{5, 5},
-				stones: stoneGroup{
+				stones: StoneGroup{
 					Point{2, 2}: Black,
 					Point{3, 2}: White,
 					Point{2, 3}: White,
@@ -871,7 +1021,7 @@ func TestBoardHasLiberties(
 		data{
 			fields: fields{
 				size: Size{5, 5},
-				stones: stoneGroup{
+				stones: StoneGroup{
 					Point{2, 1}: White,
 					Point{1, 2}: White,
 					Point{2, 2}: Black,
@@ -893,7 +1043,7 @@ func TestBoardHasLiberties(
 		data{
 			fields: fields{
 				size: Size{5, 5},
-				stones: stoneGroup{
+				stones: StoneGroup{
 					Point{2, 1}: Black,
 					Point{1, 2}: Black,
 					Point{2, 2}: Black,
@@ -928,7 +1078,7 @@ func TestBoardHasLiberties(
 		data{
 			fields: fields{
 				size: Size{5, 5},
-				stones: stoneGroup{
+				stones: StoneGroup{
 					Point{2, 1}: Black,
 					Point{1, 2}: Black,
 					Point{2, 2}: Black,
@@ -966,7 +1116,7 @@ func TestBoardHasLiberties(
 		data{
 			fields: fields{
 				size: Size{5, 5},
-				stones: stoneGroup{
+				stones: StoneGroup{
 					Point{2, 0}: White,
 					Point{1, 1}: White,
 					Point{2, 1}: Black,
@@ -1023,142 +1173,6 @@ func TestBoardHasLiberties(
 			}
 		}
 		if !hasChainMatch {
-			test.Fail()
-		}
-	}
-}
-
-func TestBoardNeighbors(test *testing.T) {
-	type fields struct {
-		size   Size
-		stones stoneGroup
-	}
-	type args struct {
-		point Point
-	}
-	type data struct {
-		fields           fields
-		args             args
-		wantNeighbors    stoneGroup
-		wantHasLiberties bool
-	}
-
-	for _, data := range []data{
-		data{
-			fields: fields{
-				size: Size{5, 5},
-				stones: stoneGroup{
-					Point{0, 0}: Black,
-					Point{1, 0}: White,
-				},
-			},
-			args: args{Point{0, 0}},
-			wantNeighbors: stoneGroup{
-				Point{1, 0}: White,
-			},
-			wantHasLiberties: true,
-		},
-		data{
-			fields: fields{
-				size: Size{5, 5},
-				stones: stoneGroup{
-					Point{2, 0}: Black,
-					Point{3, 0}: White,
-				},
-			},
-			args: args{Point{2, 0}},
-			wantNeighbors: stoneGroup{
-				Point{3, 0}: White,
-			},
-			wantHasLiberties: true,
-		},
-		data{
-			fields: fields{
-				size: Size{5, 5},
-				stones: stoneGroup{
-					Point{2, 2}: Black,
-					Point{3, 2}: White,
-					Point{2, 3}: White,
-				},
-			},
-			args: args{Point{2, 2}},
-			wantNeighbors: stoneGroup{
-				Point{3, 2}: White,
-				Point{2, 3}: White,
-			},
-			wantHasLiberties: true,
-		},
-		data{
-			fields: fields{
-				size: Size{5, 5},
-				stones: stoneGroup{
-					Point{2, 2}: Black,
-				},
-			},
-			args:             args{Point{2, 2}},
-			wantNeighbors:    stoneGroup{},
-			wantHasLiberties: true,
-		},
-		data{
-			fields: fields{
-				size: Size{5, 5},
-				stones: stoneGroup{
-					Point{2, 1}: White,
-					Point{1, 2}: White,
-					Point{2, 2}: Black,
-					Point{3, 2}: White,
-					Point{2, 3}: White,
-				},
-			},
-			args: args{Point{2, 2}},
-			wantNeighbors: stoneGroup{
-				Point{2, 1}: White,
-				Point{1, 2}: White,
-				Point{3, 2}: White,
-				Point{2, 3}: White,
-			},
-			wantHasLiberties: false,
-		},
-		data{
-			fields: fields{
-				size: Size{5, 5},
-				stones: stoneGroup{
-					Point{1, 1}: White,
-					Point{2, 1}: White,
-					Point{3, 1}: White,
-					Point{1, 2}: White,
-					Point{2, 2}: Black,
-					Point{3, 2}: White,
-					Point{1, 3}: White,
-					Point{2, 3}: White,
-					Point{3, 3}: White,
-				},
-			},
-			args: args{Point{2, 2}},
-			wantNeighbors: stoneGroup{
-				Point{2, 1}: White,
-				Point{1, 2}: White,
-				Point{3, 2}: White,
-				Point{2, 3}: White,
-			},
-			wantHasLiberties: false,
-		},
-	} {
-		board := Board{
-			size:   data.fields.size,
-			stones: data.fields.stones,
-		}
-		gotNeighbors, gotHasLiberties :=
-			board.neighbors(data.args.point)
-
-		if !reflect.DeepEqual(
-			gotNeighbors,
-			data.wantNeighbors,
-		) {
-			test.Fail()
-		}
-		if gotHasLiberties !=
-			data.wantHasLiberties {
 			test.Fail()
 		}
 	}
