@@ -80,6 +80,50 @@ func (board Board) StoneNeighbors(
 	return neighbors, hasStoneLiberties
 }
 
+// HasChainLiberties ...
+//
+// There should be a stone at the point.
+//
+// The chain shouldn't be nil.
+//
+// After finishing the function
+// the chain will be filled
+// (partially, if the result is true).
+func (board Board) HasChainLiberties(
+	point Point,
+	chain PointGroup,
+) bool {
+	if _, ok := chain[point]; ok {
+		return false
+	}
+
+	baseColor := board.stones[point]
+	chain[point] = struct{}{}
+
+	neighbors, hasStoneLiberties :=
+		board.StoneNeighbors(point)
+	if hasStoneLiberties {
+		return true
+	}
+
+	for neighbor := range neighbors {
+		color := board.stones[neighbor]
+		if color != baseColor {
+			continue
+		}
+
+		hasLiberties := board.HasChainLiberties(
+			neighbor,
+			chain,
+		)
+		if hasLiberties {
+			return true
+		}
+	}
+
+	return false
+}
+
 // HasCaptureConfiguration ...
 type HasCaptureConfiguration struct {
 	filterByColor  bool
@@ -151,9 +195,9 @@ func (board Board) HasCapture(
 			continue
 		}
 
-		hasLiberties := board.hasLiberties(
+		hasLiberties := board.HasChainLiberties(
 			point,
-			make(pointGroup),
+			make(PointGroup),
 		)
 		if !hasLiberties {
 			return color, true
@@ -256,44 +300,4 @@ func (board Board) LegalMoves(
 	}
 
 	return moves, nil
-}
-
-// There should be a stone at the point.
-//
-// The chain shouldn't be nil.
-//
-// After finishing the function
-// the chain will be filled
-// (partially, if the result is true).
-func (board Board) hasLiberties(
-	point Point,
-	chain pointGroup,
-) bool {
-	if _, ok := chain[point]; ok {
-		return false
-	}
-
-	baseColor := board.stones[point]
-	chain[point] = struct{}{}
-
-	neighbors, hasStoneLiberties :=
-		board.StoneNeighbors(point)
-	if hasStoneLiberties {
-		return true
-	}
-
-	for neighbor := range neighbors {
-		color := board.stones[neighbor]
-		if color != baseColor {
-			continue
-		}
-
-		hasLiberties :=
-			board.hasLiberties(neighbor, chain)
-		if hasLiberties {
-			return true
-		}
-	}
-
-	return false
 }

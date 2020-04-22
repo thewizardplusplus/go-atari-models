@@ -236,6 +236,224 @@ func TestBoardStoneNeighbors(
 	}
 }
 
+func TestBoardHasChainLiberties(
+	test *testing.T,
+) {
+	type fields struct {
+		size   Size
+		stones StoneGroup
+	}
+	type args struct {
+		point Point
+		chain PointGroup
+	}
+	type data struct {
+		fields           fields
+		args             args
+		wantHasLiberties bool
+		wantChain        []PointGroup
+	}
+
+	for _, data := range []data{
+		data{
+			fields: fields{
+				size: Size{5, 5},
+				stones: StoneGroup{
+					Point{2, 2}: Black,
+				},
+			},
+			args: args{
+				point: Point{2, 2},
+				chain: make(PointGroup),
+			},
+			wantHasLiberties: true,
+			wantChain: []PointGroup{
+				PointGroup{
+					Point{2, 2}: struct{}{},
+				},
+			},
+		},
+		data{
+			fields: fields{
+				size: Size{5, 5},
+				stones: StoneGroup{
+					Point{2, 2}: Black,
+					Point{3, 2}: White,
+					Point{2, 3}: White,
+				},
+			},
+			args: args{
+				point: Point{2, 2},
+				chain: make(PointGroup),
+			},
+			wantHasLiberties: true,
+			wantChain: []PointGroup{
+				PointGroup{
+					Point{2, 2}: struct{}{},
+				},
+			},
+		},
+		data{
+			fields: fields{
+				size: Size{5, 5},
+				stones: StoneGroup{
+					Point{2, 1}: White,
+					Point{1, 2}: White,
+					Point{2, 2}: Black,
+					Point{3, 2}: White,
+					Point{2, 3}: White,
+				},
+			},
+			args: args{
+				point: Point{2, 2},
+				chain: make(PointGroup),
+			},
+			wantHasLiberties: false,
+			wantChain: []PointGroup{
+				PointGroup{
+					Point{2, 2}: struct{}{},
+				},
+			},
+		},
+		data{
+			fields: fields{
+				size: Size{5, 5},
+				stones: StoneGroup{
+					Point{2, 1}: Black,
+					Point{1, 2}: Black,
+					Point{2, 2}: Black,
+					Point{3, 2}: Black,
+					Point{2, 3}: Black,
+				},
+			},
+			args: args{
+				point: Point{2, 2},
+				chain: make(PointGroup),
+			},
+			wantHasLiberties: true,
+			wantChain: []PointGroup{
+				PointGroup{
+					Point{2, 1}: struct{}{},
+					Point{2, 2}: struct{}{},
+				},
+				PointGroup{
+					Point{1, 2}: struct{}{},
+					Point{2, 2}: struct{}{},
+				},
+				PointGroup{
+					Point{2, 2}: struct{}{},
+					Point{3, 2}: struct{}{},
+				},
+				PointGroup{
+					Point{2, 2}: struct{}{},
+					Point{2, 3}: struct{}{},
+				},
+			},
+		},
+		data{
+			fields: fields{
+				size: Size{5, 5},
+				stones: StoneGroup{
+					Point{2, 1}: Black,
+					Point{1, 2}: Black,
+					Point{2, 2}: Black,
+					Point{3, 2}: Black,
+					Point{4, 2}: White,
+					Point{2, 3}: Black,
+					Point{3, 3}: White,
+					Point{2, 4}: White,
+				},
+			},
+			args: args{
+				point: Point{2, 2},
+				chain: make(PointGroup),
+			},
+			wantHasLiberties: true,
+			wantChain: []PointGroup{
+				PointGroup{
+					Point{2, 1}: struct{}{},
+					Point{2, 2}: struct{}{},
+				},
+				PointGroup{
+					Point{1, 2}: struct{}{},
+					Point{2, 2}: struct{}{},
+				},
+				PointGroup{
+					Point{2, 2}: struct{}{},
+					Point{3, 2}: struct{}{},
+				},
+				PointGroup{
+					Point{2, 2}: struct{}{},
+					Point{2, 3}: struct{}{},
+				},
+			},
+		},
+		data{
+			fields: fields{
+				size: Size{5, 5},
+				stones: StoneGroup{
+					Point{2, 0}: White,
+					Point{1, 1}: White,
+					Point{2, 1}: Black,
+					Point{3, 1}: White,
+					Point{0, 2}: White,
+					Point{1, 2}: Black,
+					Point{2, 2}: Black,
+					Point{3, 2}: Black,
+					Point{4, 2}: White,
+					Point{1, 3}: White,
+					Point{2, 3}: Black,
+					Point{3, 3}: White,
+					Point{2, 4}: White,
+				},
+			},
+			args: args{
+				point: Point{2, 2},
+				chain: make(PointGroup),
+			},
+			wantHasLiberties: false,
+			wantChain: []PointGroup{
+				PointGroup{
+					Point{2, 1}: struct{}{},
+					Point{1, 2}: struct{}{},
+					Point{2, 2}: struct{}{},
+					Point{3, 2}: struct{}{},
+					Point{2, 3}: struct{}{},
+				},
+			},
+		},
+	} {
+		board := Board{
+			size:   data.fields.size,
+			stones: data.fields.stones,
+		}
+		gotHasLiberties :=
+			board.HasChainLiberties(
+				data.args.point,
+				data.args.chain,
+			)
+
+		if gotHasLiberties !=
+			data.wantHasLiberties {
+			test.Fail()
+		}
+
+		var hasChainMatch bool
+		for _, chain := range data.wantChain {
+			hasChainMatch = reflect.DeepEqual(
+				data.args.chain,
+				chain,
+			)
+			if hasChainMatch {
+				break
+			}
+		}
+		if !hasChainMatch {
+			test.Fail()
+		}
+	}
+}
+
 func TestBoardHasCapture(test *testing.T) {
 	type fields struct {
 		size   Size
@@ -956,223 +1174,6 @@ func TestBoardLegalMoves(test *testing.T) {
 			test.Fail()
 		}
 		if gotErr != data.wantErr {
-			test.Fail()
-		}
-	}
-}
-
-func TestBoardHasLiberties(
-	test *testing.T,
-) {
-	type fields struct {
-		size   Size
-		stones StoneGroup
-	}
-	type args struct {
-		point Point
-		chain pointGroup
-	}
-	type data struct {
-		fields           fields
-		args             args
-		wantHasLiberties bool
-		wantChain        []pointGroup
-	}
-
-	for _, data := range []data{
-		data{
-			fields: fields{
-				size: Size{5, 5},
-				stones: StoneGroup{
-					Point{2, 2}: Black,
-				},
-			},
-			args: args{
-				point: Point{2, 2},
-				chain: make(pointGroup),
-			},
-			wantHasLiberties: true,
-			wantChain: []pointGroup{
-				pointGroup{
-					Point{2, 2}: struct{}{},
-				},
-			},
-		},
-		data{
-			fields: fields{
-				size: Size{5, 5},
-				stones: StoneGroup{
-					Point{2, 2}: Black,
-					Point{3, 2}: White,
-					Point{2, 3}: White,
-				},
-			},
-			args: args{
-				point: Point{2, 2},
-				chain: make(pointGroup),
-			},
-			wantHasLiberties: true,
-			wantChain: []pointGroup{
-				pointGroup{
-					Point{2, 2}: struct{}{},
-				},
-			},
-		},
-		data{
-			fields: fields{
-				size: Size{5, 5},
-				stones: StoneGroup{
-					Point{2, 1}: White,
-					Point{1, 2}: White,
-					Point{2, 2}: Black,
-					Point{3, 2}: White,
-					Point{2, 3}: White,
-				},
-			},
-			args: args{
-				point: Point{2, 2},
-				chain: make(pointGroup),
-			},
-			wantHasLiberties: false,
-			wantChain: []pointGroup{
-				pointGroup{
-					Point{2, 2}: struct{}{},
-				},
-			},
-		},
-		data{
-			fields: fields{
-				size: Size{5, 5},
-				stones: StoneGroup{
-					Point{2, 1}: Black,
-					Point{1, 2}: Black,
-					Point{2, 2}: Black,
-					Point{3, 2}: Black,
-					Point{2, 3}: Black,
-				},
-			},
-			args: args{
-				point: Point{2, 2},
-				chain: make(pointGroup),
-			},
-			wantHasLiberties: true,
-			wantChain: []pointGroup{
-				pointGroup{
-					Point{2, 1}: struct{}{},
-					Point{2, 2}: struct{}{},
-				},
-				pointGroup{
-					Point{1, 2}: struct{}{},
-					Point{2, 2}: struct{}{},
-				},
-				pointGroup{
-					Point{2, 2}: struct{}{},
-					Point{3, 2}: struct{}{},
-				},
-				pointGroup{
-					Point{2, 2}: struct{}{},
-					Point{2, 3}: struct{}{},
-				},
-			},
-		},
-		data{
-			fields: fields{
-				size: Size{5, 5},
-				stones: StoneGroup{
-					Point{2, 1}: Black,
-					Point{1, 2}: Black,
-					Point{2, 2}: Black,
-					Point{3, 2}: Black,
-					Point{4, 2}: White,
-					Point{2, 3}: Black,
-					Point{3, 3}: White,
-					Point{2, 4}: White,
-				},
-			},
-			args: args{
-				point: Point{2, 2},
-				chain: make(pointGroup),
-			},
-			wantHasLiberties: true,
-			wantChain: []pointGroup{
-				pointGroup{
-					Point{2, 1}: struct{}{},
-					Point{2, 2}: struct{}{},
-				},
-				pointGroup{
-					Point{1, 2}: struct{}{},
-					Point{2, 2}: struct{}{},
-				},
-				pointGroup{
-					Point{2, 2}: struct{}{},
-					Point{3, 2}: struct{}{},
-				},
-				pointGroup{
-					Point{2, 2}: struct{}{},
-					Point{2, 3}: struct{}{},
-				},
-			},
-		},
-		data{
-			fields: fields{
-				size: Size{5, 5},
-				stones: StoneGroup{
-					Point{2, 0}: White,
-					Point{1, 1}: White,
-					Point{2, 1}: Black,
-					Point{3, 1}: White,
-					Point{0, 2}: White,
-					Point{1, 2}: Black,
-					Point{2, 2}: Black,
-					Point{3, 2}: Black,
-					Point{4, 2}: White,
-					Point{1, 3}: White,
-					Point{2, 3}: Black,
-					Point{3, 3}: White,
-					Point{2, 4}: White,
-				},
-			},
-			args: args{
-				point: Point{2, 2},
-				chain: make(pointGroup),
-			},
-			wantHasLiberties: false,
-			wantChain: []pointGroup{
-				pointGroup{
-					Point{2, 1}: struct{}{},
-					Point{1, 2}: struct{}{},
-					Point{2, 2}: struct{}{},
-					Point{3, 2}: struct{}{},
-					Point{2, 3}: struct{}{},
-				},
-			},
-		},
-	} {
-		board := Board{
-			size:   data.fields.size,
-			stones: data.fields.stones,
-		}
-		gotHasLiberties := board.hasLiberties(
-			data.args.point,
-			data.args.chain,
-		)
-
-		if gotHasLiberties !=
-			data.wantHasLiberties {
-			test.Fail()
-		}
-
-		var hasChainMatch bool
-		for _, chain := range data.wantChain {
-			hasChainMatch = reflect.DeepEqual(
-				data.args.chain,
-				chain,
-			)
-			if hasChainMatch {
-				break
-			}
-		}
-		if !hasChainMatch {
 			test.Fail()
 		}
 	}
