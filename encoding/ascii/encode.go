@@ -6,10 +6,6 @@ import (
 	models "github.com/thewizardplusplus/go-atari-models"
 )
 
-const (
-	minColumnCode = 97
-)
-
 // EncodePoint ...
 func EncodePoint(point models.Point) string {
 	column :=
