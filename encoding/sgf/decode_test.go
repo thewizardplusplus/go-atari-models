@@ -7,6 +7,50 @@ import (
 	models "github.com/thewizardplusplus/go-atari-models"
 )
 
+func TestDecodeAxis(test *testing.T) {
+	type args struct {
+		symbol byte
+	}
+	type data struct {
+		args     args
+		wantAxis int
+		wantErr  bool
+	}
+
+	for _, data := range []data{
+		data{
+			args:     args{'e'},
+			wantAxis: 4,
+			wantErr:  false,
+		},
+		data{
+			args:     args{'E'},
+			wantAxis: 30,
+			wantErr:  false,
+		},
+		data{
+			args:     args{'\n'},
+			wantAxis: 0,
+			wantErr:  true,
+		},
+	} {
+		gotAxis, gotErr :=
+			DecodeAxis(data.args.symbol)
+
+		if !reflect.DeepEqual(
+			gotAxis,
+			data.wantAxis,
+		) {
+			test.Fail()
+		}
+
+		hasErr := gotErr != nil
+		if hasErr != data.wantErr {
+			test.Fail()
+		}
+	}
+}
+
 func TestDecodePoint(test *testing.T) {
 	type args struct {
 		text string
