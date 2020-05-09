@@ -60,33 +60,60 @@ func TestEncodePoint(test *testing.T) {
 		point models.Point
 	}
 	type data struct {
-		args args
-		want string
+		args      args
+		wantText  string
+		wantPanic bool
 	}
 
 	for _, data := range []data{
 		data{
 			args: args{
 				point: models.Point{
-					Column: 2,
-					Row:    1,
+					Column: 4,
+					Row:    30,
 				},
 			},
-			want: "c2",
+			wantText:  "eE",
+			wantPanic: false,
 		},
 		data{
 			args: args{
 				point: models.Point{
-					Column: 5,
-					Row:    6,
+					Column: -1,
+					Row:    4,
 				},
 			},
-			want: "f7",
+			wantText:  "",
+			wantPanic: true,
+		},
+		data{
+			args: args{
+				point: models.Point{
+					Column: 4,
+					Row:    -1,
+				},
+			},
+			wantText:  "",
+			wantPanic: true,
 		},
 	} {
-		got := EncodePoint(data.args.point)
+		var gotText string
+		var hasPanic bool
+		func() {
+			defer func() {
+				if err := recover(); err != nil {
+					hasPanic = true
+				}
+			}()
 
-		if got != data.want {
+			gotText = EncodePoint(data.args.point)
+		}()
+
+		if gotText != data.wantText {
+			test.Fail()
+		}
+
+		if hasPanic != data.wantPanic {
 			test.Fail()
 		}
 	}

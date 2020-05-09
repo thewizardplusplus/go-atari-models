@@ -1,20 +1,18 @@
 package sgf
 
 import (
-	"strconv"
-
 	models "github.com/thewizardplusplus/go-atari-models"
-)
-
-const (
-	minColumnCode = 97
 )
 
 // EncodeAxis ...
 //
+// It encodes an axis in accordance
+// with SGF (FF[4]).
+//
 // It performs the inverse transformation
-// for DecodeAxis. See the latter
-// for details.
+// for DecodeAxis.
+//
+// See DecodeAxis for details.
 //
 // It panics, if the axis out of ranges.
 //
@@ -38,9 +36,19 @@ func EncodeAxis(axis int) byte {
 }
 
 // EncodePoint ...
+//
+// It encodes a point in accordance
+// with SGF (FF[4]).
+//
+// It performs the inverse transformation
+// for DecodePoint.
+//
+// See DecodeAxis for details.
+//
+// It panics, if the axis out of ranges.
+//
 func EncodePoint(point models.Point) string {
-	column :=
-		string(point.Column + minColumnCode)
-	row := strconv.Itoa(point.Row + 1)
-	return column + row
+	column := EncodeAxis(point.Column)
+	row := EncodeAxis(point.Row)
+	return string([]byte{column, row})
 }

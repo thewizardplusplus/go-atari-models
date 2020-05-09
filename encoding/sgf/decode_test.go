@@ -63,10 +63,10 @@ func TestDecodePoint(test *testing.T) {
 
 	for _, data := range []data{
 		data{
-			args: args{"ef"},
+			args: args{"eE"},
 			wantPoint: models.Point{
 				Column: 4,
-				Row:    5,
+				Row:    30,
 			},
 			wantErr: false,
 		},
@@ -76,12 +76,12 @@ func TestDecodePoint(test *testing.T) {
 			wantErr:   true,
 		},
 		data{
-			args:      args{"efg"},
+			args:      args{"eee"},
 			wantPoint: models.Point{},
 			wantErr:   true,
 		},
 		data{
-			args:      args{"\nf"},
+			args:      args{"\ne"},
 			wantPoint: models.Point{},
 			wantErr:   true,
 		},
