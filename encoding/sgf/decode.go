@@ -8,8 +8,7 @@ import (
 )
 
 const (
-	// it equals to the length of the low range
-	highRangeShift = 'z' - 'a' + 1
+	alphabetLength = 'z' - 'a' + 1
 )
 
 // DecodeAxis ...
@@ -27,9 +26,10 @@ func DecodeAxis(symbol byte) (int, error) {
 	case symbol >= 'a' && symbol <= 'z':
 		axis = int(symbol - 'a')
 	case symbol >= 'A' && symbol <= 'Z':
-		axis = int(symbol-'A') + highRangeShift
+		axis = int(symbol-'A') + alphabetLength
 	default:
-		return 0, errors.New("incorrect axis")
+		return 0,
+			errors.New("symbol out of ranges")
 	}
 
 	return axis, nil
