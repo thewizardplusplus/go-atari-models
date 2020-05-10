@@ -84,15 +84,13 @@ func DecodePoint(text string) (
 	return point, nil
 }
 
-// DecodeBoard ...
-func DecodeBoard(text string) (
-	board models.Board,
-	err error,
-) {
-	return models.Board{}, err
-}
-
-func findAndDecodeSize(text string) (
+// FindAndDecodeSize ...
+//
+// It finds in the provided text and decodes
+// a size property in accordance with SGF
+// (FF[4]).
+//
+func FindAndDecodeSize(text string) (
 	size models.Size,
 	err error,
 ) {
@@ -141,6 +139,15 @@ func findAndDecodeSize(text string) (
 	return size, nil
 }
 
+// DecodeBoard ...
+func DecodeBoard(text string) (
+	board models.Board,
+	err error,
+) {
+	return models.Board{}, err
+}
+
 func checkSideRange(side int) bool {
-	return side < 1 || side > 2*alphabetLength
+	return side >= 1 &&
+		side <= 2*alphabetLength
 }
