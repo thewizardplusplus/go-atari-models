@@ -26,6 +26,27 @@ var (
 	)
 )
 
+// DecodeColor ...
+//
+// It decodes a color in accordance with
+// SGF (FF[4]).
+//
+func DecodeColor(symbol byte) (
+	color models.Color,
+	err error,
+) {
+	switch symbol {
+	case 'B':
+		color = models.Black
+	case 'W':
+		color = models.White
+	default:
+		return 0, errors.New("incorrect symbol")
+	}
+
+	return color, nil
+}
+
 // DecodeAxis ...
 //
 // It decodes an axis in accordance
@@ -159,14 +180,7 @@ func FindAndDecodeMove(text string) (
 		return models.Move{}, 0, false
 	}
 
-	var color models.Color
-	switch text[match[2]] {
-	case 'B':
-		color = models.Black
-	case 'W':
-		color = models.White
-	}
-
+	color, _ := DecodeColor(text[match[2]])
 	point, _ :=
 		DecodePoint(text[match[4]:match[5]])
 	move = models.Move{
