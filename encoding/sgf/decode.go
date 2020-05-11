@@ -195,7 +195,25 @@ func DecodeBoard(text string) (
 	board models.Board,
 	err error,
 ) {
-	return models.Board{}, err
+	size, err := FindAndDecodeSize(text)
+	if err != nil {
+		return models.Board{},
+			fmt.Errorf("incorrect size: %s", err)
+	}
+
+	board = models.NewBoard(size)
+	for {
+		move, lastIndex, ok :=
+			FindAndDecodeMove(text)
+		if !ok {
+			break
+		}
+
+		board = board.ApplyMove(move)
+		text = text[lastIndex:]
+	}
+
+	return board, nil
 }
 
 func checkSideRange(side int) bool {
