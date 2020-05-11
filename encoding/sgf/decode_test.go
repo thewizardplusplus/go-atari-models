@@ -249,3 +249,102 @@ func TestFindAndDecodeSize(
 		}
 	}
 }
+
+func TestFindAndDecodeMove(
+	test *testing.T,
+) {
+	type args struct {
+		text string
+	}
+	type data struct {
+		args          args
+		wantMove      models.Move
+		wantLastIndex int
+		wantOk        bool
+	}
+
+	for _, data := range []data{
+		data{
+			args: args{
+				text: "(;FF[4]GN[test])",
+			},
+			wantMove:      models.Move{},
+			wantLastIndex: 0,
+			wantOk:        false,
+		},
+		data{
+			args: args{
+				text: "(;FF[4]B[eE]GN[test])",
+			},
+			wantMove: models.Move{
+				Color: models.Black,
+				Point: models.Point{
+					Column: 4,
+					Row:    30,
+				},
+			},
+			wantLastIndex: 12,
+			wantOk:        true,
+		},
+		data{
+			args: args{
+				text: "(;FF[4]AB[eE]GN[test])",
+			},
+			wantMove: models.Move{
+				Color: models.Black,
+				Point: models.Point{
+					Column: 4,
+					Row:    30,
+				},
+			},
+			wantLastIndex: 13,
+			wantOk:        true,
+		},
+		data{
+			args: args{
+				text: "(;FF[4]W[eE]GN[test])",
+			},
+			wantMove: models.Move{
+				Color: models.White,
+				Point: models.Point{
+					Column: 4,
+					Row:    30,
+				},
+			},
+			wantLastIndex: 12,
+			wantOk:        true,
+		},
+		data{
+			args: args{
+				text: "(;FF[4]AW[eE]GN[test])",
+			},
+			wantMove: models.Move{
+				Color: models.White,
+				Point: models.Point{
+					Column: 4,
+					Row:    30,
+				},
+			},
+			wantLastIndex: 13,
+			wantOk:        true,
+		},
+	} {
+		gotMove, gotLastIndex, gotOk :=
+			FindAndDecodeMove(data.args.text)
+
+		if !reflect.DeepEqual(
+			gotMove,
+			data.wantMove,
+		) {
+			test.Fail()
+		}
+
+		if gotLastIndex != data.wantLastIndex {
+			test.Fail()
+		}
+
+		if gotOk != data.wantOk {
+			test.Fail()
+		}
+	}
+}
