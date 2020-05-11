@@ -21,6 +21,9 @@ var (
 	sizePattern = regexp.MustCompile(
 		`\bSZ\[(\d+)(?::(\d+))?\]`,
 	)
+	movePattern = regexp.MustCompile(
+		`\bA?([BW])\[([[:alpha:]]{2})\]`,
+	)
 )
 
 // DecodeAxis ...
@@ -137,6 +140,40 @@ func FindAndDecodeSize(text string) (
 		Height: height,
 	}
 	return size, nil
+}
+
+// FindAndDecodeMove ...
+//
+// It finds in the provided text and decodes
+// a move property in accordance with SGF
+// (FF[4]).
+//
+func FindAndDecodeMove(text string) (
+	move models.Move,
+	lastIndex int,
+	ok bool,
+) {
+	match := movePattern.
+		FindStringSubmatchIndex(text)
+	if match == nil {
+		return models.Move{}, 0, false
+	}
+
+	var color models.Color
+	switch text[match[2]] {
+	case 'B':
+		color = models.Black
+	case 'W':
+		color = models.White
+	}
+
+	point, _ :=
+		DecodePoint(text[match[4]:match[5]])
+	move = models.Move{
+		Color: color,
+		Point: point,
+	}
+	return move, match[1], true
 }
 
 // DecodeBoard ...
