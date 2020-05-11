@@ -9,6 +9,50 @@ import (
 	models "github.com/thewizardplusplus/go-atari-models"
 )
 
+func TestDecodeColor(test *testing.T) {
+	type args struct {
+		symbol byte
+	}
+	type data struct {
+		args      args
+		wantColor models.Color
+		wantErr   bool
+	}
+
+	for _, data := range []data{
+		data{
+			args:      args{'B'},
+			wantColor: models.Black,
+			wantErr:   false,
+		},
+		data{
+			args:      args{'W'},
+			wantColor: models.White,
+			wantErr:   false,
+		},
+		data{
+			args:      args{'\n'},
+			wantColor: 0,
+			wantErr:   true,
+		},
+	} {
+		gotColor, gotErr :=
+			DecodeColor(data.args.symbol)
+
+		if !reflect.DeepEqual(
+			gotColor,
+			data.wantColor,
+		) {
+			test.Fail()
+		}
+
+		hasErr := gotErr != nil
+		if hasErr != data.wantErr {
+			test.Fail()
+		}
+	}
+}
+
 func TestDecodeAxis(test *testing.T) {
 	type args struct {
 		symbol byte
