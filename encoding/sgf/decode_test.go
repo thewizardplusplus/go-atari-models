@@ -348,3 +348,88 @@ func TestFindAndDecodeMove(
 		}
 	}
 }
+
+func TestDecodeBoard(test *testing.T) {
+	type args struct {
+		text string
+	}
+	type data struct {
+		args      args
+		wantBoard models.Board
+		wantErr   bool
+	}
+
+	for _, data := range []data{
+		data{
+			args: args{
+				text: "(;FF[4]SZ[7:9]GN[test])",
+			},
+			wantBoard: models.NewBoard(
+				models.Size{
+					Width:  7,
+					Height: 9,
+				},
+			),
+			wantErr: false,
+		},
+		data{
+			args: args{
+				text: "(;FF[4]SZ[7:9]GN[test]" +
+					";B[aa](;W[gi]N[test]))",
+			},
+			wantBoard: func() models.Board {
+				board := models.NewBoard(
+					models.Size{
+						Width:  7,
+						Height: 9,
+					},
+				)
+
+				moves := []models.Move{
+					models.Move{
+						Color: models.Black,
+						Point: models.Point{
+							Column: 0,
+							Row:    0,
+						},
+					},
+					models.Move{
+						Color: models.White,
+						Point: models.Point{
+							Column: 6,
+							Row:    8,
+						},
+					},
+				}
+				for _, move := range moves {
+					board = board.ApplyMove(move)
+				}
+
+				return board
+			}(),
+			wantErr: false,
+		},
+		data{
+			args: args{
+				text: "(;FF[4]SZ[100:7]GN[test])",
+			},
+			wantBoard: models.Board{},
+			wantErr:   true,
+		},
+	} {
+		gotBoard, gotErr :=
+			DecodeBoard(data.args.text)
+
+		if !reflect.DeepEqual(
+			gotBoard,
+			data.wantBoard,
+		) {
+			test.Fail()
+		}
+
+		hasErr := gotErr != nil
+		if hasErr != data.wantErr {
+			test.Fail()
+		}
+	}
+}

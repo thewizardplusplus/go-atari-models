@@ -114,6 +114,9 @@ func DecodePoint(text string) (
 // a size property in accordance with SGF
 // (FF[4]).
 //
+// By default the resulting size equals
+// to 5x5.
+//
 func FindAndDecodeSize(text string) (
 	size models.Size,
 	err error,
@@ -169,6 +172,16 @@ func FindAndDecodeSize(text string) (
 // a move property in accordance with SGF
 // (FF[4]).
 //
+// A tree structure is ignored, moves
+// are searched simply sequentially
+// in the provided text.
+//
+// Both move and setup properties
+// are supported and are considered
+// equivalent.
+//
+// See DecodeAxis for details.
+//
 func FindAndDecodeMove(text string) (
 	move models.Move,
 	lastIndex int,
@@ -191,6 +204,15 @@ func FindAndDecodeMove(text string) (
 }
 
 // DecodeBoard ...
+//
+// It decodes a board in accordance
+// with SGF (FF[4]).
+//
+// Size and move properties are supported.
+//
+// See FindAndDecodeSize
+// and FindAndDecodeMove for details.
+//
 func DecodeBoard(text string) (
 	board models.Board,
 	err error,

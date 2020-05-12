@@ -12,9 +12,9 @@ import (
 // It performs the inverse transformation
 // for DecodeAxis.
 //
-// See DecodeAxis for details.
-//
 // It panics, if the axis out of ranges.
+//
+// See DecodeAxis for details.
 //
 func EncodeAxis(axis int) byte {
 	var symbol byte
@@ -43,9 +43,7 @@ func EncodeAxis(axis int) byte {
 // It performs the inverse transformation
 // for DecodePoint.
 //
-// See DecodeAxis for details.
-//
-// It panics, if the axis out of ranges.
+// See EncodeAxis for details.
 //
 func EncodePoint(point models.Point) string {
 	column := EncodeAxis(point.Column)
