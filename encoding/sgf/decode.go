@@ -28,8 +28,8 @@ var (
 
 // DecodeColor ...
 //
-// It decodes a color in accordance with
-// SGF (FF[4]).
+// It decodes a color in accordance
+// with SGF (FF[4]).
 //
 func DecodeColor(symbol byte) (
 	color models.Color,

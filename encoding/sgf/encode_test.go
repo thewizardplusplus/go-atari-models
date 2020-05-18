@@ -6,6 +6,33 @@ import (
 	models "github.com/thewizardplusplus/go-atari-models"
 )
 
+func TestEncodeColor(test *testing.T) {
+	type args struct {
+		color models.Color
+	}
+	type data struct {
+		args args
+		want byte
+	}
+
+	for _, data := range []data{
+		data{
+			args: args{models.Black},
+			want: 'B',
+		},
+		data{
+			args: args{models.White},
+			want: 'W',
+		},
+	} {
+		got := EncodeColor(data.args.color)
+
+		if got != data.want {
+			test.Fail()
+		}
+	}
+}
+
 func TestEncodeAxis(test *testing.T) {
 	type args struct {
 		axis int

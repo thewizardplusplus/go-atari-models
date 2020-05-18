@@ -4,6 +4,26 @@ import (
 	models "github.com/thewizardplusplus/go-atari-models"
 )
 
+// EncodeColor ...
+//
+// It encodes a color in accordance
+// with SGF (FF[4]).
+//
+// It performs the inverse transformation
+// for DecodeColor.
+//
+func EncodeColor(color models.Color) byte {
+	var symbol byte
+	switch color {
+	case models.Black:
+		symbol = 'B'
+	case models.White:
+		symbol = 'W'
+	}
+
+	return symbol
+}
+
 // EncodeAxis ...
 //
 // It encodes an axis in accordance
