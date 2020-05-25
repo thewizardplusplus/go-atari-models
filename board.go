@@ -17,13 +17,14 @@ var (
 	)
 )
 
-// ...
-var (
-	ErrAlreadyLoss = errors.New(
-		"already loss",
-	)
-	ErrAlreadyWin = errors.New("already win")
-)
+// StoneStorage ...
+type StoneStorage interface {
+	Size() Size
+	HasCapture(
+		options ...HasCaptureOption,
+	) (Color, bool)
+	CheckMove(move Move) error
+}
 
 // Board ...
 type Board struct {
