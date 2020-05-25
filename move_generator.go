@@ -12,6 +12,18 @@ var (
 	ErrAlreadyWin = errors.New("already win")
 )
 
+// Generator ...
+type Generator interface {
+	PseudolegalMoves(
+		storage StoneStorage,
+		color Color,
+	) []Move
+	LegalMoves(
+		storage StoneStorage,
+		previousMove Move,
+	) ([]Move, error)
+}
+
 // MoveGenerator ...
 type MoveGenerator struct{}
 
