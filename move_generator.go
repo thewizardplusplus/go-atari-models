@@ -14,10 +14,6 @@ var (
 
 // Generator ...
 type Generator interface {
-	PseudolegalMoves(
-		storage StoneStorage,
-		color Color,
-	) []Move
 	LegalMoves(
 		storage StoneStorage,
 		previousMove Move,
