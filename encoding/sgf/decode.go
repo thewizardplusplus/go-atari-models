@@ -26,6 +26,11 @@ var (
 	)
 )
 
+// StoneStorageFactory ...
+type StoneStorageFactory func(
+	size models.Size,
+) models.StoneStorage
+
 // DecodeColor ...
 //
 // It decodes a color in accordance
@@ -203,9 +208,9 @@ func FindAndDecodeMove(text string) (
 	return move, match[1], true
 }
 
-// DecodeBoard ...
+// DecodeStoneStorage ...
 //
-// It decodes a board in accordance
+// It decodes a stone storage in accordance
 // with SGF (FF[4]).
 //
 // Size and move properties are supported.
@@ -213,17 +218,20 @@ func FindAndDecodeMove(text string) (
 // See FindAndDecodeSize
 // and FindAndDecodeMove for details.
 //
-func DecodeBoard(text string) (
-	board models.Board,
+func DecodeStoneStorage(
+	text string,
+	factory StoneStorageFactory,
+) (
+	storage models.StoneStorage,
 	err error,
 ) {
 	size, err := FindAndDecodeSize(text)
 	if err != nil {
-		return models.Board{},
+		return nil,
 			fmt.Errorf("incorrect size: %s", err)
 	}
 
-	board = models.NewBoard(size)
+	storage = factory(size)
 	for {
 		move, lastIndex, ok :=
 			FindAndDecodeMove(text)
@@ -231,11 +239,11 @@ func DecodeBoard(text string) (
 			break
 		}
 
-		board = board.ApplyMove(move)
+		storage = storage.ApplyMove(move)
 		text = text[lastIndex:]
 	}
 
-	return board, nil
+	return storage, nil
 }
 
 func checkSideRange(side int) bool {

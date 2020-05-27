@@ -349,22 +349,26 @@ func TestFindAndDecodeMove(
 	}
 }
 
-func TestDecodeBoard(test *testing.T) {
+func TestDecodeStoneStorage(
+	test *testing.T,
+) {
 	type args struct {
-		text string
+		text    string
+		factory StoneStorageFactory
 	}
 	type data struct {
-		args      args
-		wantBoard models.Board
-		wantErr   bool
+		args        args
+		wantStorage models.StoneStorage
+		wantErr     bool
 	}
 
 	for _, data := range []data{
 		data{
 			args: args{
-				text: "(;FF[4]SZ[7:9]GN[test])",
+				text:    "(;FF[4]SZ[7:9]GN[test])",
+				factory: models.NewBoard,
 			},
-			wantBoard: models.NewBoard(
+			wantStorage: models.NewBoard(
 				models.Size{
 					Width:  7,
 					Height: 9,
@@ -376,9 +380,10 @@ func TestDecodeBoard(test *testing.T) {
 			args: args{
 				text: "(;FF[4]SZ[7:9]GN[test]" +
 					";B[aa](;W[gi]N[test]))",
+				factory: models.NewBoard,
 			},
-			wantBoard: func() models.Board {
-				board := models.NewBoard(
+			wantStorage: func() models.StoneStorage {
+				storage := models.NewBoard(
 					models.Size{
 						Width:  7,
 						Height: 9,
@@ -402,27 +407,31 @@ func TestDecodeBoard(test *testing.T) {
 					},
 				}
 				for _, move := range moves {
-					board = board.ApplyMove(move)
+					storage = storage.ApplyMove(move)
 				}
 
-				return board
+				return storage
 			}(),
 			wantErr: false,
 		},
 		data{
 			args: args{
-				text: "(;FF[4]SZ[100:7]GN[test])",
+				text:    "(;FF[4]SZ[100:7]GN[test])",
+				factory: models.NewBoard,
 			},
-			wantBoard: models.Board{},
-			wantErr:   true,
+			wantStorage: nil,
+			wantErr:     true,
 		},
 	} {
-		gotBoard, gotErr :=
-			DecodeBoard(data.args.text)
+		gotStorage, gotErr :=
+			DecodeStoneStorage(
+				data.args.text,
+				data.args.factory,
+			)
 
 		if !reflect.DeepEqual(
-			gotBoard,
-			data.wantBoard,
+			gotStorage,
+			data.wantStorage,
 		) {
 			test.Fail()
 		}
