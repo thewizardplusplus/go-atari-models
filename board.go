@@ -23,6 +23,7 @@ type StoneStorage interface {
 	HasCapture(
 		options ...HasCaptureOption,
 	) (Color, bool)
+	ApplyMove(move Move) StoneStorage
 	CheckMove(move Move) error
 }
 
@@ -214,7 +215,7 @@ func (board Board) HasCapture(
 // is correct.
 func (board Board) ApplyMove(
 	move Move,
-) Board {
+) StoneStorage {
 	stones := board.stones.Copy()
 	stones.Move(move)
 
