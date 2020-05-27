@@ -20,6 +20,7 @@ var (
 // StoneStorage ...
 type StoneStorage interface {
 	Size() Size
+	Stone(point Point) (color Color, ok bool)
 	HasCapture(
 		options ...HasCaptureOption,
 	) (Color, bool)
