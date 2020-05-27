@@ -34,7 +34,7 @@ type Board struct {
 }
 
 // NewBoard ...
-func NewBoard(size Size) Board {
+func NewBoard(size Size) StoneStorage {
 	stones := make(StoneGroup)
 	return Board{size, stones}
 }
