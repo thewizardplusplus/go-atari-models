@@ -383,7 +383,7 @@ func TestDecodeStoneStorage(
 				factory: models.NewBoard,
 			},
 			wantStorage: func() models.StoneStorage {
-				storage := models.NewBoard(
+				board := models.NewBoard(
 					models.Size{
 						Width:  7,
 						Height: 9,
@@ -407,10 +407,10 @@ func TestDecodeStoneStorage(
 					},
 				}
 				for _, move := range moves {
-					storage = storage.ApplyMove(move)
+					board = board.ApplyMove(move)
 				}
 
-				return storage
+				return board
 			}(),
 			wantErr: false,
 		},
