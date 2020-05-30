@@ -15,4 +15,4 @@ $ go get github.com/thewizardplusplus/go-atari-models
 
 The MIT License (MIT)
 
-Copyright &copy; 2019 thewizardplusplus
+Copyright &copy; 2019-2020 thewizardplusplus
