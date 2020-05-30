@@ -10,6 +10,9 @@ type Point struct {
 type PointGroup map[Point]struct{}
 
 // ...
+//
+// nolint: gochecknoglobals
+//
 var (
 	NilPoint = Point{-1, -1}
 )

@@ -13,6 +13,7 @@ const (
 	alphabetLength = 'z' - 'a' + 1
 )
 
+// nolint: gochecknoglobals
 var (
 	defaultSize = models.Size{
 		Width:  5,
@@ -155,8 +156,8 @@ func FindAndDecodeMove(text string) (move models.Move, lastIndex int, ok bool) {
 		return models.Move{}, 0, false
 	}
 
-	color, _ := DecodeColor(text[match[2]])
-	point, _ := DecodePoint(text[match[4]:match[5]])
+	color, _ := DecodeColor(text[match[2]])          // nolint: gosec
+	point, _ := DecodePoint(text[match[4]:match[5]]) // nolint: gosec
 	move = models.Move{
 		Color: color,
 		Point: point,
