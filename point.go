@@ -20,12 +20,9 @@ func (point Point) IsNil() bool {
 }
 
 // Translate ...
-func (point Point) Translate(
-	translation Point,
-) Point {
+func (point Point) Translate(translation Point) Point {
 	return Point{
-		Column: point.Column +
-			translation.Column,
-		Row: point.Row + translation.Row,
+		Column: point.Column + translation.Column,
+		Row:    point.Row + translation.Row,
 	}
 }

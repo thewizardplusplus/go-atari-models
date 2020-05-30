@@ -16,14 +16,14 @@ func TestPointIsNil(test *testing.T) {
 	}
 
 	for _, data := range []data{
-		data{
+		{
 			fields: fields{
 				column: 2,
 				row:    3,
 			},
 			want: false,
 		},
-		data{
+		{
 			fields: fields{
 				column: -1,
 				row:    -1,
@@ -58,7 +58,7 @@ func TestPointTranslate(test *testing.T) {
 	}
 
 	for _, data := range []data{
-		data{
+		{
 			fields: fields{
 				column: 2,
 				row:    3,
@@ -74,7 +74,7 @@ func TestPointTranslate(test *testing.T) {
 				Row:    5,
 			},
 		},
-		data{
+		{
 			fields: fields{
 				column: 2,
 				row:    3,
@@ -95,13 +95,9 @@ func TestPointTranslate(test *testing.T) {
 			Column: data.fields.column,
 			Row:    data.fields.row,
 		}
-		got :=
-			point.Translate(data.args.translation)
+		got := point.Translate(data.args.translation)
 
-		if !reflect.DeepEqual(
-			got,
-			data.want,
-		) {
+		if !reflect.DeepEqual(got, data.want) {
 			test.Fail()
 		}
 	}

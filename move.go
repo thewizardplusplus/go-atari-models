@@ -8,9 +8,8 @@ type Move struct {
 
 // NewPreliminaryMove ...
 //
-// It creates the move
-// from the negated passed color
-// and the nil point.
+// It creates the move from the negated passed color and the nil point.
+//
 func NewPreliminaryMove(color Color) Move {
 	return Move{
 		Color: color.Negative(),

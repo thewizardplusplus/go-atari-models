@@ -6,6 +6,7 @@ type StoneGroup map[Point]Color
 // Move ...
 //
 // It doesn't check that the move is correct.
+//
 func (group StoneGroup) Move(move Move) {
 	group[move.Point] = move.Color
 }

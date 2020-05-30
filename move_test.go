@@ -5,9 +5,7 @@ import (
 	"testing"
 )
 
-func TestNewPreliminaryMove(
-	test *testing.T,
-) {
+func TestNewPreliminaryMove(test *testing.T) {
 	got := NewPreliminaryMove(Black)
 
 	want := Move{

@@ -11,11 +11,11 @@ func TestColorNegative(test *testing.T) {
 	}
 
 	for _, data := range []data{
-		data{
+		{
 			color: Black,
 			want:  White,
 		},
-		data{
+		{
 			color: White,
 			want:  Black,
 		},

@@ -20,7 +20,7 @@ func TestSizeHasPoint(test *testing.T) {
 	}
 
 	for _, data := range []data{
-		data{
+		{
 			fields: fields{
 				Width:  8,
 				Height: 8,
@@ -30,7 +30,7 @@ func TestSizeHasPoint(test *testing.T) {
 			},
 			want: true,
 		},
-		data{
+		{
 			fields: fields{
 				Width:  8,
 				Height: 8,
@@ -40,7 +40,7 @@ func TestSizeHasPoint(test *testing.T) {
 			},
 			want: false,
 		},
-		data{
+		{
 			fields: fields{
 				Width:  8,
 				Height: 8,
@@ -50,7 +50,7 @@ func TestSizeHasPoint(test *testing.T) {
 			},
 			want: false,
 		},
-		data{
+		{
 			fields: fields{
 				Width:  8,
 				Height: 8,
@@ -60,7 +60,7 @@ func TestSizeHasPoint(test *testing.T) {
 			},
 			want: false,
 		},
-		data{
+		{
 			fields: fields{
 				Width:  8,
 				Height: 8,
@@ -70,7 +70,7 @@ func TestSizeHasPoint(test *testing.T) {
 			},
 			want: false,
 		},
-		data{
+		{
 			fields: fields{
 				Width:  8,
 				Height: 8,
@@ -80,7 +80,7 @@ func TestSizeHasPoint(test *testing.T) {
 			},
 			want: false,
 		},
-		data{
+		{
 			fields: fields{
 				Width:  8,
 				Height: 8,
@@ -107,20 +107,17 @@ func TestSizePoints(test *testing.T) {
 	points := Size{3, 3}.Points()
 
 	expectedPoints := []Point{
-		Point{0, 0},
-		Point{1, 0},
-		Point{2, 0},
-		Point{0, 1},
-		Point{1, 1},
-		Point{2, 1},
-		Point{0, 2},
-		Point{1, 2},
-		Point{2, 2},
+		{0, 0},
+		{1, 0},
+		{2, 0},
+		{0, 1},
+		{1, 1},
+		{2, 1},
+		{0, 2},
+		{1, 2},
+		{2, 2},
 	}
-	if !reflect.DeepEqual(
-		points,
-		expectedPoints,
-	) {
+	if !reflect.DeepEqual(points, expectedPoints) {
 		test.Fail()
 	}
 }

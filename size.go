@@ -8,18 +8,14 @@ type Size struct {
 
 // HasPoint ...
 func (size Size) HasPoint(point Point) bool {
-	return less(point.Column, size.Width) &&
-		less(point.Row, size.Height)
+	return less(point.Column, size.Width) && less(point.Row, size.Height)
 }
 
 // Points ...
 func (size Size) Points() []Point {
 	var points []Point
-	width, height := size.Width, size.Height
-	row := 0
-	for ; row < height; row++ {
-		column := 0
-		for ; column < width; column++ {
+	for row := 0; row < size.Height; row++ {
+		for column := 0; column < size.Width; column++ {
 			point := Point{column, row}
 			points = append(points, point)
 		}

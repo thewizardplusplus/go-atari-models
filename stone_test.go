@@ -14,10 +14,7 @@ func TestStoneGroupMove(test *testing.T) {
 		Point{2, 3}: Black,
 		Point{3, 2}: White,
 	}
-	if !reflect.DeepEqual(
-		stones,
-		expectedStones,
-	) {
+	if !reflect.DeepEqual(stones, expectedStones) {
 		test.Fail()
 	}
 }
@@ -32,10 +29,7 @@ func TestStoneGroupCopy(test *testing.T) {
 	expectedStonesCopy := StoneGroup{
 		Point{2, 3}: Black,
 	}
-	if !reflect.DeepEqual(
-		stonesCopy,
-		expectedStonesCopy,
-	) {
+	if !reflect.DeepEqual(stonesCopy, expectedStonesCopy) {
 		test.Fail()
 	}
 }
