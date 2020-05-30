@@ -5,6 +5,10 @@
 [![Build Status](https://travis-ci.org/thewizardplusplus/go-atari-models.svg?branch=master)](https://travis-ci.org/thewizardplusplus/go-atari-models)
 [![codecov](https://codecov.io/gh/thewizardplusplus/go-atari-models/branch/master/graph/badge.svg)](https://codecov.io/gh/thewizardplusplus/go-atari-models)
 
+The library that implements checking and generating of [Atari Go](https://senseis.xmp.net/?AtariGo) moves.
+
+_**Disclaimer:** this library was written directly on an Android smartphone with the AnGoIde IDE._
+
 ## Installation
 
 ```
