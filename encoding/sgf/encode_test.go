@@ -16,11 +16,11 @@ func TestEncodeColor(test *testing.T) {
 	}
 
 	for _, data := range []data{
-		data{
+		{
 			args: args{models.Black},
 			want: 'B',
 		},
-		data{
+		{
 			args: args{models.White},
 			want: 'W',
 		},
@@ -44,17 +44,17 @@ func TestEncodeAxis(test *testing.T) {
 	}
 
 	for _, data := range []data{
-		data{
+		{
 			args:       args{4},
 			wantSymbol: 'e',
 			wantPanic:  false,
 		},
-		data{
+		{
 			args:       args{30},
 			wantSymbol: 'E',
 			wantPanic:  false,
 		},
-		data{
+		{
 			args:       args{-1},
 			wantSymbol: 0,
 			wantPanic:  true,
@@ -75,7 +75,6 @@ func TestEncodeAxis(test *testing.T) {
 		if gotSymbol != data.wantSymbol {
 			test.Fail()
 		}
-
 		if hasPanic != data.wantPanic {
 			test.Fail()
 		}
@@ -93,7 +92,7 @@ func TestEncodePoint(test *testing.T) {
 	}
 
 	for _, data := range []data{
-		data{
+		{
 			args: args{
 				point: models.Point{
 					Column: 4,
@@ -103,7 +102,7 @@ func TestEncodePoint(test *testing.T) {
 			wantText:  "eE",
 			wantPanic: false,
 		},
-		data{
+		{
 			args: args{
 				point: models.Point{
 					Column: -1,
@@ -113,7 +112,7 @@ func TestEncodePoint(test *testing.T) {
 			wantText:  "",
 			wantPanic: true,
 		},
-		data{
+		{
 			args: args{
 				point: models.Point{
 					Column: 4,
@@ -139,7 +138,6 @@ func TestEncodePoint(test *testing.T) {
 		if gotText != data.wantText {
 			test.Fail()
 		}
-
 		if hasPanic != data.wantPanic {
 			test.Fail()
 		}

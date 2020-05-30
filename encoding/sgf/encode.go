@@ -6,11 +6,9 @@ import (
 
 // EncodeColor ...
 //
-// It encodes a color in accordance
-// with SGF (FF[4]).
+// It encodes a color in accordance with SGF (FF[4]).
 //
-// It performs the inverse transformation
-// for DecodeColor.
+// It performs the inverse transformation for DecodeColor.
 //
 func EncodeColor(color models.Color) byte {
 	var symbol byte
@@ -26,11 +24,9 @@ func EncodeColor(color models.Color) byte {
 
 // EncodeAxis ...
 //
-// It encodes an axis in accordance
-// with SGF (FF[4]).
+// It encodes an axis in accordance with SGF (FF[4]).
 //
-// It performs the inverse transformation
-// for DecodeAxis.
+// It performs the inverse transformation for DecodeAxis.
 //
 // It panics, if the axis out of ranges.
 //
@@ -41,15 +37,10 @@ func EncodeAxis(axis int) byte {
 	switch {
 	case axis >= 0 && axis < alphabetLength:
 		symbol = byte(axis) + 'a'
-	case axis >= alphabetLength &&
-		axis < 2*alphabetLength:
-		symbol =
-			byte(axis) - alphabetLength + 'A'
+	case axis >= alphabetLength && axis < 2*alphabetLength:
+		symbol = byte(axis) - alphabetLength + 'A'
 	default:
-		panic(
-			"sgf.EncodeAxis: " +
-				"axis out of ranges",
-		)
+		panic("sgf.EncodeAxis: axis out of ranges")
 	}
 
 	return symbol
@@ -57,11 +48,9 @@ func EncodeAxis(axis int) byte {
 
 // EncodePoint ...
 //
-// It encodes a point in accordance
-// with SGF (FF[4]).
+// It encodes a point in accordance with SGF (FF[4]).
 //
-// It performs the inverse transformation
-// for DecodePoint.
+// It performs the inverse transformation for DecodePoint.
 //
 // See EncodeAxis for details.
 //
