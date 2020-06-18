@@ -9,6 +9,28 @@ The library that implements checking and generating of [Atari Go](https://sensei
 
 _**Disclaimer:** this library was written directly on an Android smartphone with the AnGoIde IDE._
 
+## Features
+
+- representing the board as an associative array of stones with their positions as keys;
+- immutable applicating moves to the board via copying the latter;
+- checkings of moves:
+  - taking into account self-capture;
+- generating of moves via filtering from all possible ones:
+  - pseudolegal moves;
+  - legal moves (with additional checking for captures);
+- encoding in [Smart Game Format](https://senseis.xmp.net/?SGF):
+  - parsing:
+    - of a stone color;
+    - of a coordinate;
+    - of a position;
+    - of a board size;
+    - of a move;
+    - of a board;
+  - serialization:
+    - of a stone color;
+    - of a coordinate;
+    - of a position.
+
 ## Installation
 
 ```
